@@ -1,0 +1,128 @@
+@{
+    ViewBag.Title = "Test Page";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="test-container">
+    <h1>🧪 ZedCars Application Test</h1>
+    
+    <div class="test-success">
+        <h2>✅ SUCCESS!</h2>
+        <p>If you can see this page, your ZedCars application is running correctly!</p>
+    </div>
+    
+    <div class="test-info">
+        <h3>📊 Application Information:</h3>
+        <ul>
+            <li><strong>Status:</strong> Application is running</li>
+            <li><strong>Current Time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</li>
+            <li><strong>Server:</strong> @Request.ServerVariables["SERVER_NAME"]:@Request.ServerVariables["SERVER_PORT"]</li>
+            <li><strong>Framework:</strong> ASP.NET MVC</li>
+            <li><strong>View Engine:</strong> Razor (Converted from ASPX)</li>
+        </ul>
+    </div>
+    
+    <div class="test-actions">
+        <h3>🔗 Test Links:</h3>
+        <ul>
+            <li><a href="/Test/Ping" class="btn">Ping Test</a> - Simple text response</li>
+            <li><a href="/Test/Status" class="btn">JSON Status</a> - API response test</li>
+            <li><a href="/" class="btn">Home Page</a> - Main application</li>
+            <li><a href="/Home/Direct" class="btn">Direct View</a> - Simple view test</li>
+        </ul>
+    </div>
+    
+    <div class="test-troubleshooting">
+        <h3>🔧 If Other Pages Don't Work:</h3>
+        <ol>
+            <li>This test page works = MVC routing is OK</li>
+            <li>Home page fails = View inheritance issue</li>
+            <li>Direct view fails = Controller issue</li>
+            <li>All pages fail = General application issue</li>
+        </ol>
+    </div>
+</div>
+
+<style>
+    .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .test-success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+    
+    .test-success h2 {
+        color: #155724;
+        margin: 0 0 10px 0;
+    }
+    
+    .test-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .test-info ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .test-info li {
+        padding: 8px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .test-info li:last-child {
+        border-bottom: none;
+    }
+    
+    .test-actions {
+        background: #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .test-actions ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .test-actions li {
+        margin: 10px 0;
+    }
+    
+    .btn {
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    
+    .btn:hover {
+        background: #0056b3;
+    }
+    
+    .test-troubleshooting {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .test-troubleshooting h3 {
+        color: #856404;
+    }
+</style>

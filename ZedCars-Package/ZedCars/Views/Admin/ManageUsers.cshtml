@@ -1,0 +1,495 @@
+@{
+    ViewBag.Title = "Manage Users";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="admin-header">
+    <h1>User Management</h1>
+    <p class="lead">Manage registered users and their accounts</p>
+    
+    <div class="admin-actions">
+        <a href="/Admin/Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        <a href="/Admin/Reports" class="btn btn-secondary">View Reports</a>
+    </div>
+</div>
+
+<div class="user-stats">
+    <div class="stat-card">
+        <div class="stat-value">45</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card active">
+        <div class="stat-value">38</div>
+        <div class="stat-label">Active Users</div>
+    </div>
+    <div class="stat-card admin">
+        <div class="stat-value">2</div>
+        <div class="stat-label">Administrators</div>
+    </div>
+    <div class="stat-card new">
+        <div class="stat-value">7</div>
+        <div class="stat-label">New This Month</div>
+    </div>
+</div>
+
+<div class="user-controls">
+    <div class="search-section">
+        <input type="text" id="user-search" class="form-control" placeholder="Search users by name, email, or username...">
+    </div>
+    
+    <div class="filter-section">
+        <select id="role-filter" class="form-control">
+            <option value="">All Roles</option>
+            <option value="Admin">Administrators</option>
+            <option value="Customer">Customers</option>
+        </select>
+        
+        <select id="status-filter" class="form-control">
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Suspended">Suspended</option>
+        </select>
+        
+        <button id="clear-filters" class="btn btn-outline">Clear Filters</button>
+    </div>
+</div>
+
+<div class="users-table-container">
+    <table class="users-table" id="users-table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-role="Admin" data-status="Active">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin User</div>
+                            <div class="user-id">#001</div>
+                        </div>
+                    </div>
+                </td>
+                <td>admin</td>
+                <td>admin@zedcars.com</td>
+                <td><span class="role-badge admin">Admin</span></td>
+                <td><span class="status-badge active">Active</span></td>
+                <td>Jan 2023</td>
+                <td>2 hours ago</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-info" title="View Profile">👁️</button>
+                        <button class="btn btn-sm btn-warning" title="Edit User">✏️</button>
+                        <button class="btn btn-sm btn-secondary" title="Reset Password">🔑</button>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr data-role="Customer" data-status="Active">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar">J</div>
+                        <div class="user-details">
+                            <div class="user-name">John Smith</div>
+                            <div class="user-id">#002</div>
+                        </div>
+                    </div>
+                </td>
+                <td>user1</td>
+                <td>john.smith@email.com</td>
+                <td><span class="role-badge customer">Customer</span></td>
+                <td><span class="status-badge active">Active</span></td>
+                <td>Mar 2023</td>
+                <td>1 day ago</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-info" title="View Profile">👁️</button>
+                        <button class="btn btn-sm btn-warning" title="Edit User">✏️</button>
+                        <button class="btn btn-sm btn-secondary" title="Reset Password">🔑</button>
+                        <button class="btn btn-sm btn-danger" title="Suspend User">⛔</button>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr data-role="Customer" data-status="Active">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar">J</div>
+                        <div class="user-details">
+                            <div class="user-name">Jane Doe</div>
+                            <div class="user-id">#003</div>
+                        </div>
+                    </div>
+                </td>
+                <td>user2</td>
+                <td>jane.doe@email.com</td>
+                <td><span class="role-badge customer">Customer</span></td>
+                <td><span class="status-badge active">Active</span></td>
+                <td>Apr 2023</td>
+                <td>3 days ago</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-info" title="View Profile">👁️</button>
+                        <button class="btn btn-sm btn-warning" title="Edit User">✏️</button>
+                        <button class="btn btn-sm btn-secondary" title="Reset Password">🔑</button>
+                        <button class="btn btn-sm btn-danger" title="Suspend User">⛔</button>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr data-role="Customer" data-status="Inactive">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar">R</div>
+                        <div class="user-details">
+                            <div class="user-name">Robert Johnson</div>
+                            <div class="user-id">#004</div>
+                        </div>
+                    </div>
+                </td>
+                <td>user3</td>
+                <td>robert.j@email.com</td>
+                <td><span class="role-badge customer">Customer</span></td>
+                <td><span class="status-badge inactive">Inactive</span></td>
+                <td>May 2023</td>
+                <td>2 weeks ago</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-info" title="View Profile">👁️</button>
+                        <button class="btn btn-sm btn-warning" title="Edit User">✏️</button>
+                        <button class="btn btn-sm btn-success" title="Activate User">✅</button>
+                        <button class="btn btn-sm btn-danger" title="Delete User">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+        margin: -30px -30px 40px -30px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .admin-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #6c757d;
+        color: #6c757d;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8em;
+    }
+    
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+    }
+    
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+    
+    .user-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #007bff;
+    }
+    
+    .stat-card.active {
+        border-left-color: #28a745;
+    }
+    
+    .stat-card.admin {
+        border-left-color: #dc3545;
+    }
+    
+    .stat-card.new {
+        border-left-color: #ffc107;
+    }
+    
+    .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #343a40;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    
+    .user-controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    .search-section {
+        margin-bottom: 15px;
+    }
+    
+    .filter-section {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .form-control {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+        min-width: 150px;
+    }
+    
+    .users-table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .users-table th {
+        background: #f8f9fa;
+        padding: 15px 10px;
+        text-align: left;
+        font-weight: bold;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .users-table td {
+        padding: 15px 10px;
+        border-bottom: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+    
+    .users-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    
+    .user-name {
+        font-weight: bold;
+        color: #343a40;
+    }
+    
+    .user-id {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+    
+    .role-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .role-badge.admin {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .role-badge.customer {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .status-badge.active {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-badge.inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .status-badge.suspended {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+    
+    @@media (max-width: 768px) {
+        .users-table-container {
+            overflow-x: auto;
+        }
+        
+        .users-table {
+            min-width: 800px;
+        }
+        
+        .filter-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('user-search');
+        const roleFilter = document.getElementById('role-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        const tableRows = document.querySelectorAll('#users-table tbody tr');
+        
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleValue = roleFilter.value;
+            const statusValue = statusFilter.value;
+            
+            tableRows.forEach(row => {
+                const userName = row.querySelector('.user-name').textContent.toLowerCase();
+                const username = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+                const role = row.dataset.role;
+                const status = row.dataset.status;
+                
+                const matchesSearch = userName.includes(searchTerm) || 
+                                    username.includes(searchTerm) || 
+                                    email.includes(searchTerm);
+                const matchesRole = !roleValue || role === roleValue;
+                const matchesStatus = !statusValue || status === statusValue;
+                
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', filterTable);
+        roleFilter.addEventListener('change', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+        
+        clearFiltersBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            roleFilter.value = '';
+            statusFilter.value = '';
+            filterTable();
+        });
+        
+        // Handle action buttons
+        document.querySelectorAll('.action-buttons button').forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.title;
+                const userName = this.closest('tr').querySelector('.user-name').textContent;
+                
+                if (action.includes('Delete') || action.includes('Suspend')) {
+                    if (confirm(`Are you sure you want to ${action.toLowerCase()} ${userName}?`)) {
+                        alert(`${action} action would be performed for ${userName}`);
+                    }
+                } else {
+                    alert(`${action} action would be performed for ${userName}`);
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,322 @@
+@{
+    ViewBag.Title = "Vehicle Inventory";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="inventory-header">
+    <h1>Vehicle Inventory</h1>
+    <p class="lead">Browse our premium selection of quality vehicles</p>
+    
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label for="brand-filter">Brand:</label>
+            <select id="brand-filter" class="filter-control">
+                <option value="">All Brands</option>
+                <option value="toyota">Toyota</option>
+                <option value="honda">Honda</option>
+                <option value="ford">Ford</option>
+                <option value="bmw">BMW</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="tesla">Tesla</option>
+                <option value="jeep">Jeep</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="type-filter">Type:</label>
+            <select id="type-filter" class="filter-control">
+                <option value="">All Types</option>
+                <option value="sedan">Sedan</option>
+                <option value="suv">SUV</option>
+                <option value="truck">Truck</option>
+                <option value="sports">Sports</option>
+                <option value="electric">Electric</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="price-filter">Price Range:</label>
+            <select id="price-filter" class="filter-control">
+                <option value="">Any Price</option>
+                <option value="under-20k">Under $20,000</option>
+                <option value="20k-30k">$20,000 - $30,000</option>
+                <option value="30k-50k">$30,000 - $50,000</option>
+                <option value="over-50k">Over $50,000</option>
+            </select>
+        </div>
+        
+        <button id="filter-button" class="btn btn-primary">Apply Filters</button>
+    </div>
+</div>
+
+<div class="inventory-content">
+    <div class="inventory-stats">
+        <div class="stat-item">
+            <span class="stat-number">23</span>
+            <span class="stat-label">Vehicles Available</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">8</span>
+            <span class="stat-label">Brands</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">$1.2M</span>
+            <span class="stat-label">Total Inventory Value</span>
+        </div>
+    </div>
+    
+    <div class="vehicle-grid" id="vehicle-grid">
+        <!-- Vehicle cards will be populated here -->
+        <div class="vehicle-card" data-brand="toyota" data-type="sedan" data-price="25000">
+            <div class="vehicle-image">
+                <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Toyota Camry" />
+            </div>
+            <div class="vehicle-details">
+                <h3>Toyota Camry</h3>
+                <p class="vehicle-price">$25,000</p>
+                <p class="vehicle-specs">2022 • Sedan • 32 MPG</p>
+                <p class="vehicle-desc">Reliable and fuel-efficient sedan with modern features</p>
+                <a href="/Home/VehicleDetail/1" class="btn btn-sm">View Details</a>
+            </div>
+        </div>
+        
+        <div class="vehicle-card" data-brand="honda" data-type="suv" data-price="35000">
+            <div class="vehicle-image">
+                <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Honda CR-V" />
+            </div>
+            <div class="vehicle-details">
+                <h3>Honda CR-V</h3>
+                <p class="vehicle-price">$35,000</p>
+                <p class="vehicle-specs">2023 • SUV • 28 MPG</p>
+                <p class="vehicle-desc">Spacious and versatile SUV perfect for families</p>
+                <a href="/Home/VehicleDetail/2" class="btn btn-sm">View Details</a>
+            </div>
+        </div>
+        
+        <div class="vehicle-card" data-brand="ford" data-type="truck" data-price="45000">
+            <div class="vehicle-image">
+                <img src="https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Ford F-150" />
+            </div>
+            <div class="vehicle-details">
+                <h3>Ford F-150</h3>
+                <p class="vehicle-price">$45,000</p>
+                <p class="vehicle-specs">2023 • Truck • 24 MPG</p>
+                <p class="vehicle-desc">America's best-selling truck with unmatched capability</p>
+                <a href="/Home/VehicleDetail/3" class="btn btn-sm">View Details</a>
+            </div>
+        </div>
+        
+        <div class="vehicle-card" data-brand="bmw" data-type="sedan" data-price="55000">
+            <div class="vehicle-image">
+                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="BMW 5 Series" />
+            </div>
+            <div class="vehicle-details">
+                <h3>BMW 5 Series</h3>
+                <p class="vehicle-price">$55,000</p>
+                <p class="vehicle-specs">2023 • Sedan • 26 MPG</p>
+                <p class="vehicle-desc">Luxury sedan with premium features and performance</p>
+                <a href="/Home/VehicleDetail/4" class="btn btn-sm">View Details</a>
+            </div>
+        </div>
+        
+        <div class="vehicle-card" data-brand="tesla" data-type="electric" data-price="60000">
+            <div class="vehicle-image">
+                <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Tesla Model 3" />
+            </div>
+            <div class="vehicle-details">
+                <h3>Tesla Model 3</h3>
+                <p class="vehicle-price">$60,000</p>
+                <p class="vehicle-specs">2023 • Electric • 120 MPGe</p>
+                <p class="vehicle-desc">Electric vehicle with cutting-edge technology</p>
+                <a href="/Home/VehicleDetail/5" class="btn btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .inventory-header {
+        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+        margin: -30px -30px 40px -30px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+        background: rgba(255,255,255,0.1);
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-group label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    .filter-control {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        background: white;
+    }
+    
+    .inventory-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 30px;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-number {
+        display: block;
+        font-size: 2em;
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+    }
+    
+    .vehicle-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .vehicle-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .vehicle-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .vehicle-image {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .vehicle-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .vehicle-details {
+        padding: 20px;
+    }
+    
+    .vehicle-details h3 {
+        margin: 0 0 10px 0;
+        color: #343a40;
+    }
+    
+    .vehicle-price {
+        font-weight: bold;
+        color: #28a745;
+        font-size: 1.2em;
+        margin: 5px 0;
+    }
+    
+    .vehicle-specs {
+        color: #6c757d;
+        margin: 5px 0;
+        font-size: 0.9em;
+    }
+    
+    .vehicle-desc {
+        color: #6c757d;
+        margin: 10px 0 15px 0;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn:hover {
+        background: #0056b3;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+    }
+    
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+</style>
+
+<script>
+    document.getElementById('filter-button').addEventListener('click', function() {
+        const brandFilter = document.getElementById('brand-filter').value;
+        const typeFilter = document.getElementById('type-filter').value;
+        const priceFilter = document.getElementById('price-filter').value;
+        
+        const cards = document.querySelectorAll('.vehicle-card');
+        
+        cards.forEach(card => {
+            let show = true;
+            
+            if (brandFilter && card.dataset.brand !== brandFilter) {
+                show = false;
+            }
+            
+            if (typeFilter && card.dataset.type !== typeFilter) {
+                show = false;
+            }
+            
+            if (priceFilter) {
+                const price = parseInt(card.dataset.price);
+                switch(priceFilter) {
+                    case 'under-20k':
+                        if (price >= 20000) show = false;
+                        break;
+                    case '20k-30k':
+                        if (price < 20000 || price > 30000) show = false;
+                        break;
+                    case '30k-50k':
+                        if (price < 30000 || price > 50000) show = false;
+                        break;
+                    case 'over-50k':
+                        if (price <= 50000) show = false;
+                        break;
+                }
+            }
+            
+            card.style.display = show ? 'block' : 'none';
+        });
+    });
+</script>

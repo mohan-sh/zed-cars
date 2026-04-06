@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZedCars - @ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .nav { background: #333; padding: 10px 0; }
+        .nav a { color: white; text-decoration: none; padding: 10px 20px; display: inline-block; }
+        .nav a:hover { background: #555; }
+        .content { background: white; margin: 20px auto; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .footer { background: #333; color: white; text-align: center; padding: 20px 0; margin-top: 40px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>ZedCars - Premium Automotive Solutions</h1>
+            <p>Your trusted partner for quality vehicles and accessories</p>
+        </div>
+    </div>
+    
+    <div class="nav">
+        <div class="container">
+            <a href="/">Home</a>
+            <a href="/Home/About">About</a>
+            <a href="/Home/Contact">Contact</a>
+            <a href="/Account/Login">Admin Login</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year ZedCars. All rights reserved. | Quality vehicles since 2020</p>
+        </div>
+    </div>
+</body>
+</html>

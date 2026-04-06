@@ -1,0 +1,481 @@
+@model ZedCars.Controllers.UserInfo
+@{
+    ViewBag.Title = "User Profile";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>User Profile</h1>
+        <p class="subtitle">Manage your account information</p>
+    </div>
+    
+    <div class="profile-content">
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <div class="avatar-placeholder">
+                    @Model.FullName.Substring(0, 1)
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <h2>@Model.FullName</h2>
+                <p class="profile-role">@Model.Role</p>
+                
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Username</div>
+                        <div class="detail-value">@Model.Username</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">@Model.Username@("@example.com")</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Member Since</div>
+                        <div class="detail-value">June 2023</div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <a href="#" class="btn btn-outline">Edit Profile</a>
+                    <a href="/Account/Logout" class="btn btn-secondary">Sign Out</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-tabs">
+            <div class="tab-header">
+                <div class="tab active" data-tab="favorites">Favorite Vehicles</div>
+                <div class="tab" data-tab="history">Browsing History</div>
+                <div class="tab" data-tab="inquiries">My Inquiries</div>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="favorites">
+                    <div class="favorites-list">
+                        <div class="favorite-item">
+                            <div class="favorite-image">
+                                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=60" alt="BMW 5 Series" />
+                            </div>
+                            <div class="favorite-details">
+                                <h3>BMW 5 Series</h3>
+                                <p class="favorite-price">$55,000</p>
+                                <div class="favorite-actions">
+                                    <a href="/Home/VehicleDetail/4" class="btn btn-sm">View</a>
+                                    <a href="#" class="btn btn-sm btn-outline">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="favorite-item">
+                            <div class="favorite-image">
+                                <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=60" alt="Tesla Model 3" />
+                            </div>
+                            <div class="favorite-details">
+                                <h3>Tesla Model 3</h3>
+                                <p class="favorite-price">$60,000</p>
+                                <div class="favorite-actions">
+                                    <a href="/Home/VehicleDetail/5" class="btn btn-sm">View</a>
+                                    <a href="#" class="btn btn-sm btn-outline">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="favorite-item">
+                            <div class="favorite-image">
+                                <img src="https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=60" alt="Ford F-150" />
+                            </div>
+                            <div class="favorite-details">
+                                <h3>Ford F-150</h3>
+                                <p class="favorite-price">$45,000</p>
+                                <div class="favorite-actions">
+                                    <a href="/Home/VehicleDetail/3" class="btn btn-sm">View</a>
+                                    <a href="#" class="btn btn-sm btn-outline">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="history">
+                    <div class="history-list">
+                        <div class="history-item">
+                            <div class="history-date">Today, 2:30 PM</div>
+                            <div class="history-action">Viewed BMW 5 Series details</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-date">Today, 1:45 PM</div>
+                            <div class="history-action">Browsed Tesla Model 3 inventory</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-date">Yesterday, 4:20 PM</div>
+                            <div class="history-action">Searched for SUVs under $40,000</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-date">Yesterday, 3:15 PM</div>
+                            <div class="history-action">Added Ford F-150 to favorites</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="inquiries">
+                    <div class="inquiries-list">
+                        <div class="inquiry-item">
+                            <div class="inquiry-header">
+                                <h3>Test Drive Request - BMW 5 Series</h3>
+                                <span class="inquiry-status pending">Pending</span>
+                            </div>
+                            <div class="inquiry-date">Submitted: July 20, 2025</div>
+                            <div class="inquiry-message">Interested in scheduling a test drive for the BMW 5 Series. Available weekends.</div>
+                        </div>
+                        
+                        <div class="inquiry-item">
+                            <div class="inquiry-header">
+                                <h3>Financing Information - Tesla Model 3</h3>
+                                <span class="inquiry-status responded">Responded</span>
+                            </div>
+                            <div class="inquiry-date">Submitted: July 18, 2025</div>
+                            <div class="inquiry-message">Looking for financing options for the Tesla Model 3. Please provide details.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .profile-header h1 {
+        color: #343a40;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
+        color: #6c757d;
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+    
+    .profile-avatar {
+        flex-shrink: 0;
+    }
+    
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5em;
+        font-weight: bold;
+    }
+    
+    .profile-info {
+        flex: 1;
+    }
+    
+    .profile-info h2 {
+        margin: 0 0 5px 0;
+        color: #343a40;
+    }
+    
+    .profile-role {
+        color: #6c757d;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+    
+    .profile-details {
+        margin-bottom: 25px;
+    }
+    
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .detail-label {
+        font-weight: bold;
+        color: #495057;
+    }
+    
+    .detail-value {
+        color: #6c757d;
+    }
+    
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 2px solid #007bff;
+        color: #007bff;
+    }
+    
+    .btn-outline:hover {
+        background: #007bff;
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #545b62;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.9em;
+    }
+    
+    .profile-tabs {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .tab-header {
+        display: flex;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .tab {
+        flex: 1;
+        padding: 15px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+    }
+    
+    .tab:hover {
+        background: #e9ecef;
+    }
+    
+    .tab.active {
+        background: white;
+        border-bottom-color: #007bff;
+        color: #007bff;
+        font-weight: bold;
+    }
+    
+    .tab-content {
+        padding: 30px;
+    }
+    
+    .tab-pane {
+        display: none;
+    }
+    
+    .tab-pane.active {
+        display: block;
+    }
+    
+    .favorites-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .favorite-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .favorite-image img {
+        width: 150px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    .favorite-details {
+        flex: 1;
+    }
+    
+    .favorite-details h3 {
+        margin: 0 0 5px 0;
+        color: #343a40;
+    }
+    
+    .favorite-price {
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 10px;
+    }
+    
+    .favorite-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .history-list,
+    .inquiries-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .history-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .history-date {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+    
+    .history-action {
+        color: #495057;
+    }
+    
+    .inquiry-item {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+    
+    .inquiry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .inquiry-header h3 {
+        margin: 0;
+        color: #343a40;
+    }
+    
+    .inquiry-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .inquiry-status.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .inquiry-status.responded {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .inquiry-date {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    
+    .inquiry-message {
+        color: #495057;
+        line-height: 1.4;
+    }
+    
+    @@media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .tab-header {
+            flex-direction: column;
+        }
+        
+        .favorite-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .inquiry-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                // Remove active class from all tabs and panes
+                tabs.forEach(t => t.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding pane
+                this.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+    });
+</script>

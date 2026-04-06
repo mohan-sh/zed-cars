@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+ 
+# Build outputs
+bin/
+obj/
+ 
+# Debug / Release folders
+Debug/
+Release/
+ 
+# Visual Studio cache
+*.vsidx
