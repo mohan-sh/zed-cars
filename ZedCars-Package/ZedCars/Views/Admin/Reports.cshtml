@@ -41,180 +41,81 @@
     </div>
     
     <div class="report-summary">
-        <div class="summary-card revenue">
+        <div class="summary-card">
             <div class="summary-icon">&#128176;</div>
             <div class="summary-content">
-                <div class="summary-title">Total Revenue</div>
-                <div class="summary-value">$384,750</div>
-                <div class="summary-change positive">+18.5% vs last period</div>
+                <div class="summary-title">Inventory Value</div>
+                <div class="summary-value">$@string.Format("{0:N0}", ViewBag.InventoryValue)</div>
             </div>
         </div>
-        
-        <div class="summary-card sales">
+        <div class="summary-card">
             <div class="summary-icon">&#9632;</div>
             <div class="summary-content">
-                <div class="summary-title">Vehicles Sold</div>
-                <div class="summary-value">47</div>
-                <div class="summary-change positive">+12.3% vs last period</div>
+                <div class="summary-title">Total Vehicles</div>
+                <div class="summary-value">@ViewBag.TotalVehicles</div>
             </div>
         </div>
-        
-        <div class="summary-card inquiries">
-            <div class="summary-icon">&#128231;</div>
+        <div class="summary-card">
+            <div class="summary-icon">&#128101;</div>
             <div class="summary-content">
-                <div class="summary-title">Customer Inquiries</div>
-                <div class="summary-value">156</div>
-                <div class="summary-change positive">+8.7% vs last period</div>
+                <div class="summary-title">Registered Users</div>
+                <div class="summary-value">@ViewBag.TotalUsers</div>
             </div>
         </div>
-        
-        <div class="summary-card conversion">
+        <div class="summary-card">
             <div class="summary-icon">&#128200;</div>
             <div class="summary-content">
-                <div class="summary-title">Conversion Rate</div>
-                <div class="summary-value">30.1%</div>
-                <div class="summary-change negative">-2.1% vs last period</div>
+                <div class="summary-title">Brands</div>
+                <div class="summary-value">@ViewBag.TotalBrands</div>
             </div>
         </div>
     </div>
-    
-    <div class="reports-grid">
+
+    <div id="report-content" class="reports-grid">
         <div class="report-section">
-            <div class="report-header">
-                <h3>Sales Performance</h3>
-                <div class="report-actions">
-                    <button class="btn btn-sm btn-outline">View Details</button>
-                </div>
-            </div>
-            <div class="chart-container">
-                <div class="sales-chart">
-                    <div class="chart-bar" style="height: 60%;" data-value="$45,000">Week 1</div>
-                    <div class="chart-bar" style="height: 80%;" data-value="$60,000">Week 2</div>
-                    <div class="chart-bar" style="height: 45%;" data-value="$33,750">Week 3</div>
-                    <div class="chart-bar" style="height: 95%;" data-value="$71,250">Week 4</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="report-section">
-            <div class="report-header">
-                <h3>Top Selling Brands</h3>
-                <div class="report-actions">
-                    <button class="btn btn-sm btn-outline">View Details</button>
-                </div>
-            </div>
+            <div class="report-header"><h3>Vehicles by Brand</h3></div>
             <div class="brand-stats">
-                <div class="brand-item">
-                    <div class="brand-info">
-                        <span class="brand-name">BMW</span>
-                        <span class="brand-count">12 sold</span>
-                    </div>
-                    <div class="brand-bar">
-                        <div class="brand-progress" style="width: 85%;"></div>
-                    </div>
-                </div>
-                
-                <div class="brand-item">
-                    <div class="brand-info">
-                        <span class="brand-name">Tesla</span>
-                        <span class="brand-count">10 sold</span>
-                    </div>
-                    <div class="brand-bar">
-                        <div class="brand-progress" style="width: 70%;"></div>
-                    </div>
-                </div>
-                
-                <div class="brand-item">
-                    <div class="brand-info">
-                        <span class="brand-name">Toyota</span>
-                        <span class="brand-count">8 sold</span>
-                    </div>
-                    <div class="brand-bar">
-                        <div class="brand-progress" style="width: 55%;"></div>
-                    </div>
-                </div>
-                
-                <div class="brand-item">
-                    <div class="brand-info">
-                        <span class="brand-name">Honda</span>
-                        <span class="brand-count">7 sold</span>
-                    </div>
-                    <div class="brand-bar">
-                        <div class="brand-progress" style="width: 50%;"></div>
-                    </div>
-                </div>
+                @if (ViewBag.BrandStats != null)
+                {
+                    int maxCount = 1;
+                    foreach (object[] b in ViewBag.BrandStats)
+                    {
+                        if (Convert.ToInt32(b[1]) > maxCount) { maxCount = Convert.ToInt32(b[1]); }
+                    }
+
+                    foreach (object[] b in ViewBag.BrandStats)
+                    {
+                        int pct = (int)(Convert.ToDouble(b[1]) / maxCount * 100);
+                        <div class="brand-item">
+                            <div class="brand-info">
+                                <span class="brand-name">@b[0]</span>
+                                <span class="brand-count">@b[1] vehicles</span>
+                            </div>
+                            <div class="brand-bar">
+                                <div class="brand-progress" style="width:@pct%;"></div>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
         </div>
-        
+
         <div class="report-section">
-            <div class="report-header">
-                <h3>Recent Transactions</h3>
-                <div class="report-actions">
-                    <button class="btn btn-sm btn-outline">View All</button>
-                </div>
-            </div>
+            <div class="report-header"><h3>Recently Added Vehicles</h3></div>
             <div class="transactions-list">
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-vehicle">BMW 5 Series</div>
-                        <div class="transaction-date">2 days ago</div>
-                    </div>
-                    <div class="transaction-amount">$55,000</div>
-                </div>
-                
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-vehicle">Tesla Model 3</div>
-                        <div class="transaction-date">5 days ago</div>
-                    </div>
-                    <div class="transaction-amount">$60,000</div>
-                </div>
-                
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-vehicle">Honda CR-V</div>
-                        <div class="transaction-date">1 week ago</div>
-                    </div>
-                    <div class="transaction-amount">$35,000</div>
-                </div>
-                
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-vehicle">Ford F-150</div>
-                        <div class="transaction-date">1 week ago</div>
-                    </div>
-                    <div class="transaction-amount">$45,000</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="report-section">
-            <div class="report-header">
-                <h3>Customer Activity</h3>
-                <div class="report-actions">
-                    <button class="btn btn-sm btn-outline">View Details</button>
-                </div>
-            </div>
-            <div class="activity-stats">
-                <div class="activity-item">
-                    <div class="activity-label">New Registrations</div>
-                    <div class="activity-value">23</div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-label">Test Drive Requests</div>
-                    <div class="activity-value">45</div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-label">Financing Applications</div>
-                    <div class="activity-value">18</div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-label">Contact Form Submissions</div>
-                    <div class="activity-value">67</div>
-                </div>
+                @if (ViewBag.RecentCars != null)
+                {
+                    foreach (object[] c in ViewBag.RecentCars)
+                    {
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-vehicle">@c[0]</div>
+                                <div class="transaction-date">@Convert.ToDateTime(c[2]).ToString("MMM dd, yyyy")</div>
+                            </div>
+                            <div class="transaction-amount">$@string.Format("{0:N0}", c[1])</div>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>
@@ -533,51 +434,27 @@
     }
 </style>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dateRange = document.getElementById('date-range');
-        const reportType = document.getElementById('report-type');
-        const generateBtn = document.getElementById('generate-report');
-        const exportBtn = document.getElementById('export-report');
-        
-        generateBtn.addEventListener('click', function() {
-            const range = dateRange.value;
-            const type = reportType.value;
-            
-            // Simulate report generation
-            this.textContent = 'Generating...';
-            this.disabled = true;
-            
-            setTimeout(() => {
-                this.textContent = 'Generate Report';
-                this.disabled = false;
-                alert(`Generated ${type} report for ${range} days`);
-            }, 2000);
+    document.getElementById('generate-report').addEventListener('click', function() {
+        window.location.href = '/Admin/Reports';
+    });
+
+    document.getElementById('export-report').addEventListener('click', function() {
+        var btn = this;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        html2canvas(document.getElementById('report-content')).then(function(canvas) {
+            var imgData = canvas.toDataURL('image/png');
+            var pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+            var pageWidth = pdf.internal.pageSize.getWidth();
+            var imgHeight = canvas.height * pageWidth / canvas.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+            pdf.save('ZedCars-Report.pdf');
+            btn.textContent = 'Export PDF';
+            btn.disabled = false;
         });
-        
-        exportBtn.addEventListener('click', function() {
-            alert('Report export functionality would be implemented here');
-        });
-        
-        // Add hover effects to chart bars
-        document.querySelectorAll('.chart-bar').forEach(bar => {
-            bar.addEventListener('mouseenter', function() {
-                const value = this.dataset.value;
-                if (value) {
-                    this.title = value;
-                }
-            });
-        });
-        
-        // Animate progress bars on load
-        setTimeout(() => {
-            document.querySelectorAll('.brand-progress').forEach(progress => {
-                const width = progress.style.width;
-                progress.style.width = '0%';
-                setTimeout(() => {
-                    progress.style.width = width;
-                }, 100);
-            });
-        }, 500);
     });
 </script>

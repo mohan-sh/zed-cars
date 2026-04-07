@@ -54,23 +54,23 @@
 
 <div class="admin-stats">
     <div class="stat-card">
-        <div class="stat-value">23</div>
+        <div class="stat-value">@ViewBag.TotalVehicles</div>
         <div class="stat-label">Total Vehicles</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">8</div>
+        <div class="stat-value">@ViewBag.TotalBrands</div>
         <div class="stat-label">Vehicle Brands</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">45</div>
+        <div class="stat-value">@ViewBag.TotalUsers</div>
         <div class="stat-label">Registered Users</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">12</div>
-        <div class="stat-label">Inquiries</div>
+        <div class="stat-value">$@string.Format("{0:N0}", ViewBag.InventoryValue)</div>
+        <div class="stat-label">Inventory Value</div>
     </div>
 </div>
 
@@ -135,39 +135,20 @@
 </div>
 
 <div class="recent-activity">
-    <h2>Recent Activity</h2>
+    <h2>Recently Added Vehicles</h2>
     <div class="activity-list">
-        <div class="activity-item">
-            <div class="activity-icon">[V]</div>
-            <div class="activity-content">
-                <div class="activity-title">New vehicle added: BMW 5 Series</div>
-                <div class="activity-time">2 hours ago</div>
-            </div>
-        </div>
-        
-        <div class="activity-item">
-            <div class="activity-icon">[U]</div>
-            <div class="activity-content">
-                <div class="activity-title">New user registration: John Smith</div>
-                <div class="activity-time">4 hours ago</div>
-            </div>
-        </div>
-        
-        <div class="activity-item">
-            <div class="activity-icon">&#128231;</div>
-            <div class="activity-content">
-                <div class="activity-title">Inquiry received for Tesla Model 3</div>
-                <div class="activity-time">6 hours ago</div>
-            </div>
-        </div>
-        
-        <div class="activity-item">
-            <div class="activity-icon">&#128176;</div>
-            <div class="activity-content">
-                <div class="activity-title">Sale completed: Honda CR-V</div>
-                <div class="activity-time">1 day ago</div>
-            </div>
-        </div>
+        @if (ViewBag.RecentCars != null)
+        {
+            foreach (var car in ViewBag.RecentCars)
+            {
+                <div class="activity-item">
+                    <div class="activity-icon">[V]</div>
+                    <div class="activity-content">
+                        <div class="activity-title">@car</div>
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>
 

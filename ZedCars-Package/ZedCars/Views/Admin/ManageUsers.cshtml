@@ -1,6 +1,11 @@
+@model List<ZedCars.Controllers.UserListItem>
 @{
     ViewBag.Title = "Manage Users";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+
+    int total  = Model != null ? Model.Count : 0;
+    int active = Model != null ? Model.FindAll(u => u.IsActive).Count : 0;
+    int admins = Model != null ? Model.FindAll(u => u.Role == "Admin").Count : 0;
 }
 
 <div class="admin-header">
@@ -15,20 +20,16 @@
 
 <div class="user-stats">
     <div class="stat-card">
-        <div class="stat-value">45</div>
+        <div class="stat-value">@total</div>
         <div class="stat-label">Total Users</div>
     </div>
     <div class="stat-card active">
-        <div class="stat-value">38</div>
+        <div class="stat-value">@active</div>
         <div class="stat-label">Active Users</div>
     </div>
     <div class="stat-card admin">
-        <div class="stat-value">2</div>
+        <div class="stat-value">@admins</div>
         <div class="stat-label">Administrators</div>
-    </div>
-    <div class="stat-card new">
-        <div class="stat-value">7</div>
-        <div class="stat-label">New This Month</div>
     </div>
 </div>
 
@@ -61,117 +62,40 @@
             <tr>
                 <th>User</th>
                 <th>Username</th>
-                <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
                 <th>Joined</th>
-                <th>Last Login</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr data-role="Admin" data-status="Active">
-                <td>
-                    <div class="user-info">
-                        <div class="user-avatar">A</div>
-                        <div class="user-details">
-                            <div class="user-name">Admin User</div>
-                            <div class="user-id">#001</div>
-                        </div>
-                    </div>
-                </td>
-                <td>admin</td>
-                <td>admin@zedcars.com</td>
-                <td><span class="role-badge admin">Admin</span></td>
-                <td><span class="status-badge active">Active</span></td>
-                <td>Jan 2023</td>
-                <td>2 hours ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-info" title="View Profile">&#128065;</button>
-                        <button class="btn btn-sm btn-warning" title="Edit User">&#9999;</button>
-                        <button class="btn btn-sm btn-secondary" title="Reset Password">&#128273;</button>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-role="Customer" data-status="Active">
-                <td>
-                    <div class="user-info">
-                        <div class="user-avatar">J</div>
-                        <div class="user-details">
-                            <div class="user-name">John Smith</div>
-                            <div class="user-id">#002</div>
-                        </div>
-                    </div>
-                </td>
-                <td>user1</td>
-                <td>john.smith@email.com</td>
-                <td><span class="role-badge customer">Customer</span></td>
-                <td><span class="status-badge active">Active</span></td>
-                <td>Mar 2023</td>
-                <td>1 day ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-info" title="View Profile">&#128065;</button>
-                        <button class="btn btn-sm btn-warning" title="Edit User">&#9999;</button>
-                        <button class="btn btn-sm btn-secondary" title="Reset Password">&#128273;</button>
-                        <button class="btn btn-sm btn-danger" title="Suspend User">&#9940;</button>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-role="Customer" data-status="Active">
-                <td>
-                    <div class="user-info">
-                        <div class="user-avatar">J</div>
-                        <div class="user-details">
-                            <div class="user-name">Jane Doe</div>
-                            <div class="user-id">#003</div>
-                        </div>
-                    </div>
-                </td>
-                <td>user2</td>
-                <td>jane.doe@email.com</td>
-                <td><span class="role-badge customer">Customer</span></td>
-                <td><span class="status-badge active">Active</span></td>
-                <td>Apr 2023</td>
-                <td>3 days ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-info" title="View Profile">&#128065;</button>
-                        <button class="btn btn-sm btn-warning" title="Edit User">&#9999;</button>
-                        <button class="btn btn-sm btn-secondary" title="Reset Password">&#128273;</button>
-                        <button class="btn btn-sm btn-danger" title="Suspend User">&#9940;</button>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-role="Customer" data-status="Inactive">
-                <td>
-                    <div class="user-info">
-                        <div class="user-avatar">R</div>
-                        <div class="user-details">
-                            <div class="user-name">Robert Johnson</div>
-                            <div class="user-id">#004</div>
-                        </div>
-                    </div>
-                </td>
-                <td>user3</td>
-                <td>robert.j@email.com</td>
-                <td><span class="role-badge customer">Customer</span></td>
-                <td><span class="status-badge inactive">Inactive</span></td>
-                <td>May 2023</td>
-                <td>2 weeks ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-info" title="View Profile">&#128065;</button>
-                        <button class="btn btn-sm btn-warning" title="Edit User">&#9999;</button>
-                        <button class="btn btn-sm btn-success" title="Activate User">&#9989;</button>
-                        <button class="btn btn-sm btn-danger" title="Delete User">&#128465;</button>
-                    </div>
-                </td>
-            </tr>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var u in Model)
+                {
+                    var roleClass   = u.Role == "Admin" ? "admin" : "customer";
+                    var statusClass = u.IsActive ? "active" : "inactive";
+                    var statusText  = u.IsActive ? "Active" : "Inactive";
+                    var avatar      = u.FullName.Length > 0 ? u.FullName[0].ToString().ToUpper() : "?";
+                    <tr data-role="@u.Role" data-status="@statusText">
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">@avatar</div>
+                                <div class="user-details">
+                                    <div class="user-name">@u.FullName</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@u.Username</td>
+                        <td><span class="role-badge @roleClass">@u.Role</span></td>
+                        <td><span class="status-badge @statusClass">@statusText</span></td>
+                        <td>@u.CreatedDate</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" style="text-align:center;padding:20px;">No users found.</td></tr>
+            }
         </tbody>
     </table>
 </div>

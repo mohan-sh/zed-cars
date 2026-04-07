@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using ZedCars.Database;
 
 namespace ZedCars.Controllers
 {
@@ -21,7 +22,26 @@ namespace ZedCars.Controllers
         // GET: /Admin/Dashboard
         public ActionResult Dashboard()
         {
-            ViewBag.Vehicles = Vehicles;
+            try
+            {
+                ViewBag.TotalVehicles  = DatabaseConnection.ExecuteScalar("SELECT COUNT(*) FROM Cars WHERE IsActive=TRUE") ?? 0;
+                ViewBag.TotalBrands    = DatabaseConnection.ExecuteScalar("SELECT COUNT(DISTINCT Brand) FROM Cars WHERE IsActive=TRUE") ?? 0;
+                ViewBag.TotalUsers     = DatabaseConnection.ExecuteScalar("SELECT (SELECT COUNT(*) FROM Users) + (SELECT COUNT(*) FROM Admins)") ?? 0;
+                ViewBag.InventoryValue = DatabaseConnection.ExecuteScalar("SELECT IFNULL(SUM(Price * StockQuantity),0) FROM Cars WHERE IsActive=TRUE") ?? 0;
+
+                // Recent cars added
+                var recentCars = new List<string>();
+                using (var reader = DatabaseConnection.ExecuteReader("SELECT Brand, Model, CreatedDate FROM Cars WHERE IsActive=TRUE ORDER BY CreatedDate DESC LIMIT 5"))
+                    while (reader.Read())
+                        recentCars.Add(reader["Brand"] + " " + reader["Model"] + " (added " + Convert.ToDateTime(reader["CreatedDate"]).ToString("MMM dd") + ")");
+                ViewBag.RecentCars = recentCars;
+            }
+            catch
+            {
+                ViewBag.TotalVehicles = 0; ViewBag.TotalBrands = 0;
+                ViewBag.TotalUsers = 0; ViewBag.InventoryValue = 0;
+                ViewBag.RecentCars = new List<string>();
+            }
             return View();
         }
 
@@ -115,14 +135,63 @@ namespace ZedCars.Controllers
         // GET: /Admin/ManageUsers
         public ActionResult ManageUsers()
         {
-            // In a real application, you would get users from a database
-            return View();
+            var users = new List<UserListItem>();
+            try
+            {
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT Username, FullName, Role, IsActive, CreatedDate FROM Users " +
+                    "UNION ALL " +
+                    "SELECT Username, FullName, 'Admin' AS Role, IsActive, CreatedDate FROM Admins " +
+                    "ORDER BY CreatedDate DESC"))
+                {
+                    while (reader.Read())
+                        users.Add(new UserListItem
+                        {
+                            Username    = reader["Username"].ToString(),
+                            FullName    = reader["FullName"].ToString(),
+                            Role        = reader["Role"].ToString(),
+                            IsActive    = reader.GetBoolean("IsActive"),
+                            CreatedDate = reader["CreatedDate"].ToString()
+                        });
+                }
+            }
+            catch { }
+            return View(users);
         }
         
         // GET: /Admin/Reports
         public ActionResult Reports()
         {
-            // In a real application, you would generate reports from database data
+            try
+            {
+                ViewBag.TotalVehicles   = DatabaseConnection.ExecuteScalar("SELECT COUNT(*) FROM Cars WHERE IsActive=TRUE") ?? 0;
+                ViewBag.TotalBrands     = DatabaseConnection.ExecuteScalar("SELECT COUNT(DISTINCT Brand) FROM Cars WHERE IsActive=TRUE") ?? 0;
+                ViewBag.InventoryValue  = DatabaseConnection.ExecuteScalar("SELECT IFNULL(SUM(Price * StockQuantity),0) FROM Cars WHERE IsActive=TRUE") ?? 0;
+                ViewBag.TotalUsers      = DatabaseConnection.ExecuteScalar("SELECT (SELECT COUNT(*) FROM Users) + (SELECT COUNT(*) FROM Admins)") ?? 0;
+
+                // Brand breakdown
+                var brandStats = new List<object[]>();
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT Brand, COUNT(*) as Count FROM Cars WHERE IsActive=TRUE GROUP BY Brand ORDER BY Count DESC"))
+                    while (reader.Read())
+                        brandStats.Add(new object[] { reader["Brand"].ToString(), reader["Count"] });
+                ViewBag.BrandStats = brandStats;
+
+                // Recent cars
+                var recentCars = new List<object[]>();
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT Brand, Model, Price, CreatedDate FROM Cars WHERE IsActive=TRUE ORDER BY CreatedDate DESC LIMIT 5"))
+                    while (reader.Read())
+                        recentCars.Add(new object[] { reader["Brand"] + " " + reader["Model"], reader["Price"], reader["CreatedDate"] });
+                ViewBag.RecentCars = recentCars;
+            }
+            catch
+            {
+                ViewBag.TotalVehicles = 0; ViewBag.TotalBrands = 0;
+                ViewBag.InventoryValue = 0; ViewBag.TotalUsers = 0;
+                ViewBag.BrandStats = new List<object[]>();
+                ViewBag.RecentCars = new List<object[]>();
+            }
             return View();
         }
     }
@@ -135,5 +204,14 @@ namespace ZedCars.Controllers
         public int Year { get; set; }
         public decimal Price { get; set; }
         public string Status { get; set; }
+    }
+
+    public class UserListItem
+    {
+        public string Username    { get; set; }
+        public string FullName    { get; set; }
+        public string Role        { get; set; }
+        public bool   IsActive    { get; set; }
+        public string CreatedDate { get; set; }
     }
 }
