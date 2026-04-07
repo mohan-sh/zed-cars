@@ -40,14 +40,25 @@ namespace ZedCars.Controllers
 
         // POST: /Admin/AddVehicle
         [HttpPost]
-        public ActionResult AddVehicle(Vehicle vehicle)
+        public ActionResult AddVehicle(ZedCars.Models.Car car)
         {
-            // In a real application, you would add the vehicle to a database
-            vehicle.Id = Vehicles.Count + 1;
-            Vehicles.Add(vehicle);
-            
-            TempData["SuccessMessage"] = "Vehicle added successfully!";
-            return RedirectToAction("Inventory");
+            try
+            {
+                string sql = string.Format(
+                    "INSERT INTO Cars (Brand, Model, Year, Price, FuelType, Transmission, Description, ImageUrl, Color, Mileage, StockQuantity, IsActive, CreatedDate) " +
+                    "VALUES ('{0}', '{1}', '{2}', {3}, '{4}', '{5}', '{6}', '{7}', '{8}', {9}, 1, TRUE, NOW())",
+                    car.Brand, car.Model, car.Year, car.Price, car.FuelType, car.Transmission,
+                    car.Description, car.ImageUrl, car.Color,
+                    car.Mileage.HasValue ? car.Mileage.Value.ToString() : "0");
+
+                ZedCars.Database.DatabaseConnection.ExecuteNonQuery(sql);
+                TempData["SuccessMessage"] = "Vehicle added successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to add vehicle: " + ex.Message;
+            }
+            return RedirectToAction("Inventory", "Home");
         }
 
         // GET: /Admin/EditVehicle/5
