@@ -11,6 +11,38 @@ namespace ZedCars.Controllers
     {
         private UserInfo GetUserFromDb(string username, string password)
         {
+            // First check Admins table
+            try
+            {
+                using (var connection = DatabaseConnection.GetConnection())
+                {
+                    connection.Open();
+                    using (var cmd = new MySqlCommand(
+                        "SELECT Username, Password, FullName, Role FROM Admins WHERE Username=@u AND Password=@p AND IsActive=TRUE",
+                        connection))
+                    {
+                        cmd.Parameters.AddWithValue("@u", username);
+                        cmd.Parameters.AddWithValue("@p", password);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                                return new UserInfo
+                                {
+                                    Username = reader["Username"].ToString(),
+                                    Password = reader["Password"].ToString(),
+                                    FullName = reader["FullName"].ToString(),
+                                    Role     = "Admin"
+                                };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("DB admin login error: " + ex.Message);
+            }
+
+            // Then check Users table
             try
             {
                 using (var connection = DatabaseConnection.GetConnection())

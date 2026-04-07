@@ -89,14 +89,11 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Admin/DeleteVehicle/5
-        public ActionResult DeleteVehicle(int id)
+        public ActionResult DeleteVehicle(int? id)
         {
-            var vehicle = Vehicles.Find(v => v.Id == id);
-            if (vehicle == null)
-            {
-                return HttpNotFound();
-            }
-            
+            if (!id.HasValue) return RedirectToAction("Inventory");
+            var vehicle = Vehicles.Find(v => v.Id == id.Value);
+            if (vehicle == null) return HttpNotFound();
             return View(vehicle);
         }
 

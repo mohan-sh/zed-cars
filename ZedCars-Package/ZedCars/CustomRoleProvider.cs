@@ -11,6 +11,29 @@ namespace ZedCars
 
         public override string[] GetRolesForUser(string username)
         {
+            // Check Admins table first
+            try
+            {
+                using (var connection = DatabaseConnection.GetConnection())
+                {
+                    connection.Open();
+                    using (var cmd = new MySqlCommand(
+                        "SELECT AdminId FROM Admins WHERE Username=@u AND IsActive=TRUE",
+                        connection))
+                    {
+                        cmd.Parameters.AddWithValue("@u", username);
+                        var result = cmd.ExecuteScalar();
+                        if (result != null)
+                            return new[] { "Admin" };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("GetRolesForUser (Admins) error: " + ex.Message);
+            }
+
+            // Fall back to Users table
             try
             {
                 using (var connection = DatabaseConnection.GetConnection())
