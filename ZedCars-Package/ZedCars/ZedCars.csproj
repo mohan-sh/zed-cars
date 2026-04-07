@@ -92,6 +92,16 @@
     <!-- MySQL Data reference -->
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\car_1.jpg" />
+    <Content Include="Content\images\car_10.jpg" />
+    <Content Include="Content\images\car_2.jpg" />
+    <Content Include="Content\images\car_3.jpg" />
+    <Content Include="Content\images\car_4.jpg" />
+    <Content Include="Content\images\car_5.jpg" />
+    <Content Include="Content\images\car_6.jpg" />
+    <Content Include="Content\images\car_7.jpg" />
+    <Content Include="Content\images\car_8.jpg" />
+    <Content Include="Content\images\car_9.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="Content\Site.css" />

@@ -1,3 +1,4 @@
+@model List<ZedCars.Models.Car>
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
@@ -53,41 +54,27 @@
     <div class="featured-vehicles">
         <h3>Featured Vehicles</h3>
         <div class="vehicle-grid">
-            <div class="vehicle-card">
-                <div class="vehicle-image">
-                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Ym13JTIwNSUyMHNlcmllc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=300&q=60" alt="BMW 5 Series" />
-                </div>
-                <div class="vehicle-details">
-                    <h4>BMW 5 Series</h4>
-                    <p class="vehicle-price">$55,000</p>
-                    <p class="vehicle-desc">Luxury sedan with premium features</p>
-                    <a href="/Home/VehicleDetail/4" class="btn btn-sm">View Details</a>
-                </div>
-            </div>
-            
-            <div class="vehicle-card">
-                <div class="vehicle-image">
-                    <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGVzbGElMjBtb2RlbCUyMDN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=300&q=60" alt="Tesla Model 3" />
-                </div>
-                <div class="vehicle-details">
-                    <h4>Tesla Model 3</h4>
-                    <p class="vehicle-price">$60,000</p>
-                    <p class="vehicle-desc">Electric vehicle with cutting-edge technology</p>
-                    <a href="/Home/VehicleDetail/5" class="btn btn-sm">View Details</a>
-                </div>
-            </div>
-            
-            <div class="vehicle-card">
-                <div class="vehicle-image">
-                    <img src="https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zm9yZCUyMGYxNTB8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=300&q=60" alt="Ford F-150" />
-                </div>
-                <div class="vehicle-details">
-                    <h4>Ford F-150</h4>
-                    <p class="vehicle-price">$45,000</p>
-                    <p class="vehicle-desc">Powerful and versatile pickup truck</p>
-                    <a href="/Home/VehicleDetail/3" class="btn btn-sm">View Details</a>
-                </div>
-            </div>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var car in Model)
+                {
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="@car.ImageUrl" alt="@car.Brand @car.Model" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'" />
+                        </div>
+                        <div class="vehicle-details">
+                            <h4>@car.Brand @car.Model</h4>
+                            <p class="vehicle-price">$@car.Price.ToString("N0")</p>
+                            <p class="vehicle-desc">@car.Year | @car.FuelType | @car.Transmission</p>
+                            <a href="/Home/VehicleDetail/@car.CarId" class="btn btn-sm">View Details</a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No featured vehicles available.</p>
+            }
         </div>
         
         <div class="view-all-link">

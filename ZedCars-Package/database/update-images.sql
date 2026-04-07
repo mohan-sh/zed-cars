@@ -1,0 +1,30 @@
+USE zoomcars_inventory;
+
+UPDATE Cars SET ImageUrl = '/Content/images/car_1.jpg' WHERE CarId = 1;
+UPDATE Cars SET ImageUrl = '/Content/images/car_2.jpg' WHERE CarId = 2;
+UPDATE Cars SET ImageUrl = '/Content/images/car_3.jpg' WHERE CarId = 3;
+UPDATE Cars SET ImageUrl = '/Content/images/car_4.jpg' WHERE CarId = 4;
+UPDATE Cars SET ImageUrl = '/Content/images/car_5.jpg' WHERE CarId = 5;
+UPDATE Cars SET ImageUrl = '/Content/images/car_6.jpg' WHERE CarId = 6;
+UPDATE Cars SET ImageUrl = '/Content/images/car_7.jpg' WHERE CarId = 7;
+UPDATE Cars SET ImageUrl = '/Content/images/car_8.jpg' WHERE CarId = 8;
+UPDATE Cars SET ImageUrl = '/Content/images/car_9.jpg' WHERE CarId = 9;
+UPDATE Cars SET ImageUrl = '/Content/images/car_10.jpg' WHERE CarId = 10;
+UPDATE Cars SET ImageUrl = '/Content/images/car_1.jpg' WHERE CarId = 11;
+UPDATE Cars SET ImageUrl = '/Content/images/car_2.jpg' WHERE CarId = 12;
+UPDATE Cars SET ImageUrl = '/Content/images/car_3.jpg' WHERE CarId = 13;
+UPDATE Cars SET ImageUrl = '/Content/images/car_4.jpg' WHERE CarId = 14;
+UPDATE Cars SET ImageUrl = '/Content/images/car_5.jpg' WHERE CarId = 15;
+UPDATE Cars SET ImageUrl = '/Content/images/car_6.jpg' WHERE CarId = 16;
+UPDATE Cars SET ImageUrl = '/Content/images/car_7.jpg' WHERE CarId = 17;
+UPDATE Cars SET ImageUrl = '/Content/images/car_8.jpg' WHERE CarId = 18;
+UPDATE Cars SET ImageUrl = '/Content/images/car_9.jpg' WHERE CarId = 19;
+UPDATE Cars SET ImageUrl = '/Content/images/car_10.jpg' WHERE CarId = 20;
+UPDATE Cars SET ImageUrl = '/Content/images/car_1.jpg' WHERE CarId = 21;
+UPDATE Cars SET ImageUrl = '/Content/images/car_2.jpg' WHERE CarId = 22;
+UPDATE Cars SET ImageUrl = '/Content/images/car_3.jpg' WHERE CarId = 23;
+UPDATE Cars SET ImageUrl = '/Content/images/car_4.jpg' WHERE CarId = 24;
+UPDATE Cars SET ImageUrl = '/Content/images/car_5.jpg' WHERE CarId = 25;
+UPDATE Cars SET ImageUrl = '/Content/images/car_6.jpg' WHERE CarId = 26;
+
+COMMIT;

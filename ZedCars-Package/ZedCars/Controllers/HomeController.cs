@@ -1,15 +1,48 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
+using ZedCars.Models;
+using ZedCars.Database;
 
 namespace ZedCars.Controllers
 {
     public class HomeController : Controller
     {
+        private List<Car> GetCarsFromDb()
+        {
+            var cars = new List<Car>();
+            try
+            {
+                using (var reader = DatabaseConnection.ExecuteReader("SELECT CarId, Brand, Model, Year, Price, FuelType, Transmission, Description, ImageUrl, StockQuantity FROM Cars WHERE IsActive = TRUE"))
+                {
+                    while (reader.Read())
+                    {
+                        cars.Add(new Car
+                        {
+                            CarId         = reader.GetInt32("CarId"),
+                            Brand         = reader["Brand"].ToString(),
+                            Model         = reader["Model"].ToString(),
+                            Year          = reader["Year"].ToString(),
+                            Price         = reader.GetDecimal("Price"),
+                            FuelType      = reader["FuelType"].ToString(),
+                            Transmission  = reader["Transmission"].ToString(),
+                            Description   = reader["Description"].ToString(),
+                            ImageUrl      = reader["ImageUrl"].ToString(),
+                            StockQuantity = reader.GetInt32("StockQuantity")
+                        });
+                    }
+                }
+            }
+            catch { }
+            return cars;
+        }
         public ActionResult Index()
         {
             ViewBag.Message = "Welcome to ZedCars!";
             ViewBag.CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            return View();
+            var all = GetCarsFromDb();
+            all.Sort((a, b) => b.Price.CompareTo(a.Price));
+            return View(all.GetRange(0, Math.Min(3, all.Count)));
         }
 
         public ActionResult About()
@@ -27,14 +60,39 @@ namespace ZedCars.Controllers
         public ActionResult Inventory()
         {
             ViewBag.Message = "Vehicle Inventory";
-            return View();
+            return View(GetCarsFromDb());
         }
         
-        public ActionResult VehicleDetail(int id = 4)
+        public ActionResult VehicleDetail(int id = 0)
         {
             ViewBag.Message = "Vehicle Details";
-            ViewBag.VehicleId = id;
-            return View();
+            Car car = null;
+            try
+            {
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT CarId, Brand, Model, Year, Price, FuelType, Transmission, Description, ImageUrl, StockQuantity FROM Cars WHERE CarId = " + id + " AND IsActive = TRUE"))
+                {
+                    if (reader.Read())
+                    {
+                        car = new Car
+                        {
+                            CarId         = reader.GetInt32("CarId"),
+                            Brand         = reader["Brand"].ToString(),
+                            Model         = reader["Model"].ToString(),
+                            Year          = reader["Year"].ToString(),
+                            Price         = reader.GetDecimal("Price"),
+                            FuelType      = reader["FuelType"].ToString(),
+                            Transmission  = reader["Transmission"].ToString(),
+                            Description   = reader["Description"].ToString(),
+                            ImageUrl      = reader["ImageUrl"].ToString(),
+                            StockQuantity = reader.GetInt32("StockQuantity")
+                        };
+                    }
+                }
+            }
+            catch { }
+            if (car == null) return HttpNotFound();
+            return View(car);
         }
         
         public ActionResult Direct()

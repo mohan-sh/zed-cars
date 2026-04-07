@@ -1,3 +1,5 @@
+@model List<ZedCars.Models.Car>
+@using System.Linq
 @{
     ViewBag.Title = "Vehicle Inventory";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
@@ -53,85 +55,45 @@
 <div class="inventory-content">
     <div class="inventory-stats">
         <div class="stat-item">
-            <span class="stat-number">23</span>
+            <span class="stat-number">@(Model != null ? Model.Count : 0)</span>
             <span class="stat-label">Vehicles Available</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">8</span>
+            <span class="stat-number">@(Model != null ? Model.Select(c => c.Brand).Distinct().Count() : 0)</span>
             <span class="stat-label">Brands</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">$1.2M</span>
-            <span class="stat-label">Total Inventory Value</span>
         </div>
     </div>
     
     <div class="vehicle-grid" id="vehicle-grid">
-        <!-- Vehicle cards will be populated here -->
-        <div class="vehicle-card" data-brand="toyota" data-type="sedan" data-price="25000">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Toyota Camry" />
-            </div>
-            <div class="vehicle-details">
-                <h3>Toyota Camry</h3>
-                <p class="vehicle-price">$25,000</p>
-                <p class="vehicle-specs">2022 • Sedan • 32 MPG</p>
-                <p class="vehicle-desc">Reliable and fuel-efficient sedan with modern features</p>
-                <a href="/Home/VehicleDetail/1" class="btn btn-sm">View Details</a>
-            </div>
-        </div>
-        
-        <div class="vehicle-card" data-brand="honda" data-type="suv" data-price="35000">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Honda CR-V" />
-            </div>
-            <div class="vehicle-details">
-                <h3>Honda CR-V</h3>
-                <p class="vehicle-price">$35,000</p>
-                <p class="vehicle-specs">2023 • SUV • 28 MPG</p>
-                <p class="vehicle-desc">Spacious and versatile SUV perfect for families</p>
-                <a href="/Home/VehicleDetail/2" class="btn btn-sm">View Details</a>
-            </div>
-        </div>
-        
-        <div class="vehicle-card" data-brand="ford" data-type="truck" data-price="45000">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Ford F-150" />
-            </div>
-            <div class="vehicle-details">
-                <h3>Ford F-150</h3>
-                <p class="vehicle-price">$45,000</p>
-                <p class="vehicle-specs">2023 • Truck • 24 MPG</p>
-                <p class="vehicle-desc">America's best-selling truck with unmatched capability</p>
-                <a href="/Home/VehicleDetail/3" class="btn btn-sm">View Details</a>
-            </div>
-        </div>
-        
-        <div class="vehicle-card" data-brand="bmw" data-type="sedan" data-price="55000">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="BMW 5 Series" />
-            </div>
-            <div class="vehicle-details">
-                <h3>BMW 5 Series</h3>
-                <p class="vehicle-price">$55,000</p>
-                <p class="vehicle-specs">2023 • Sedan • 26 MPG</p>
-                <p class="vehicle-desc">Luxury sedan with premium features and performance</p>
-                <a href="/Home/VehicleDetail/4" class="btn btn-sm">View Details</a>
-            </div>
-        </div>
-        
-        <div class="vehicle-card" data-brand="tesla" data-type="electric" data-price="60000">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="Tesla Model 3" />
-            </div>
-            <div class="vehicle-details">
-                <h3>Tesla Model 3</h3>
-                <p class="vehicle-price">$60,000</p>
-                <p class="vehicle-specs">2023 • Electric • 120 MPGe</p>
-                <p class="vehicle-desc">Electric vehicle with cutting-edge technology</p>
-                <a href="/Home/VehicleDetail/5" class="btn btn-sm">View Details</a>
-            </div>
-        </div>
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var car in Model)
+            {
+                <div class="vehicle-card" data-brand="@car.Brand.ToLower()" data-price="@car.Price">
+                    <div class="vehicle-image">
+                        @if (!string.IsNullOrEmpty(car.ImageUrl))
+                        {
+                            <img src="@Url.Content(car.ImageUrl)" alt="@car.Brand @car.Model" style="width:100%;height:100%;object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <div style="background:#e9ecef;height:100%;display:flex;align-items:center;justify-content:center;color:#6c757d;">No Image</div>
+                        }
+                    </div>
+                    <div class="vehicle-details">
+                        <h3>@car.Brand @car.Model</h3>
+                        <p class="vehicle-price">@car.Price.ToString("N0")</p>
+                        <p class="vehicle-specs">@car.Year &bull; @car.FuelType &bull; @car.Transmission</p>
+                        <p class="vehicle-desc">@car.Description</p>
+                        <a href="/Home/VehicleDetail/@car.CarId" class="btn btn-sm">View Details</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p style="color:#6c757d;">No vehicles available.</p>
+        }
     </div>
 </div>
 
