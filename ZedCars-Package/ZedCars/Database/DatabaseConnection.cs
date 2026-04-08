@@ -1,33 +1,28 @@
-using System;
-using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using MySql.Data.MySqlClient;
 
 namespace ZedCars.Database
 {
     public static class DatabaseConnection
     {
+        private static string? _connectionString;
+
+        public static void Initialize(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         private static string GetConnectionString()
         {
-            // Try multiple connection string names for flexibility
-            var connectionStringSettings = ConfigurationManager.ConnectionStrings["ZedCarsDB"] 
-                                         ?? ConfigurationManager.ConnectionStrings["DefaultConnection"];
-            
-            if (connectionStringSettings != null)
-            {
-                return connectionStringSettings.ConnectionString;
-            }
-            
-            // Fallback connection string if not found in config
-            return "Server=localhost;Database=zoomcars_inventory;Uid=zoomcars_user;Pwd=admin123;Port=3306;";
+            return _connectionString
+                ?? "Server=localhost;Database=zoomcars_inventory;Uid=zoomcars_user;Pwd=admin123;Port=3306;SslMode=None;AllowUserVariables=True;";
         }
-        
+
         public static MySqlConnection GetConnection()
         {
             try
             {
-                string connectionString = GetConnectionString();
-                return new MySqlConnection(connectionString);
+                return new MySqlConnection(GetConnectionString());
             }
             catch (Exception ex)
             {
@@ -35,8 +30,8 @@ namespace ZedCars.Database
                 throw;
             }
         }
-        
-        public static object ExecuteScalar(string query)
+
+        public static object? ExecuteScalar(string query)
         {
             using (var connection = GetConnection())
             {
@@ -47,7 +42,7 @@ namespace ZedCars.Database
                 }
             }
         }
-        
+
         public static int ExecuteNonQuery(string query)
         {
             using (var connection = GetConnection())
@@ -59,7 +54,7 @@ namespace ZedCars.Database
                 }
             }
         }
-        
+
         public static MySqlDataReader ExecuteReader(string query)
         {
             var connection = GetConnection();
@@ -67,7 +62,7 @@ namespace ZedCars.Database
             var command = new MySqlCommand(query, connection);
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
-        
+
         public static bool TestConnection()
         {
             try

@@ -1,6 +1,4 @@
-using System;
-using System.Configuration;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 
 namespace ZedCars.Database
 {
@@ -18,19 +16,10 @@ namespace ZedCars.Database
         {
             try
             {
-                // Get connection string from Web.config
-                string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
-                
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    return "❌ ERROR: No connection string found in Web.config";
-                }
-
-                // Test connection
-                using (var connection = new MySqlConnection(connectionString))
+                using (var connection = DatabaseConnection.GetConnection())
                 {
                     connection.Open();
-                    
+
                     // Test basic query
                     using (var command = new MySqlCommand("SELECT VERSION() as MySqlVersion, NOW() as CurrentTime", connection))
                     {
@@ -38,24 +27,24 @@ namespace ZedCars.Database
                         {
                             if (reader.Read())
                             {
-                                string version = reader["MySqlVersion"].ToString();
-                                string currentTime = reader["CurrentTime"].ToString();
-                                
-                                return $"✅ SUCCESS: MySQL {version} connected at {currentTime}";
+                                string version = reader["MySqlVersion"].ToString() ?? string.Empty;
+                                string currentTime = reader["CurrentTime"].ToString() ?? string.Empty;
+
+                                return $"\u2705 SUCCESS: MySQL {version} connected at {currentTime}";
                             }
                         }
                     }
                 }
-                
-                return "✅ SUCCESS: Connection opened but no data returned";
+
+                return "\u2705 SUCCESS: Connection opened but no data returned";
             }
             catch (MySqlException mysqlEx)
             {
-                return $"❌ MySQL ERROR: {mysqlEx.Message} (Code: {mysqlEx.Number})";
+                return $"\u274C MySQL ERROR: {mysqlEx.Message} (Code: {mysqlEx.Number})";
             }
             catch (Exception ex)
             {
-                return $"❌ GENERAL ERROR: {ex.Message}";
+                return $"\u274C GENERAL ERROR: {ex.Message}";
             }
         }
 
@@ -67,51 +56,44 @@ namespace ZedCars.Database
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
-                
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    return "❌ ERROR: No connection string found";
-                }
-
-                using (var connection = new MySqlConnection(connectionString))
+                using (var connection = DatabaseConnection.GetConnection())
                 {
                     connection.Open();
-                    
+
                     // Check database
                     using (var command = new MySqlCommand("SELECT DATABASE() as CurrentDB", connection))
                     {
                         var currentDb = command.ExecuteScalar()?.ToString();
-                        
+
                         if (string.IsNullOrEmpty(currentDb))
                         {
-                            return "❌ ERROR: No database selected";
+                            return "\u274C ERROR: No database selected";
                         }
-                        
+
                         // Check tables
                         command.CommandText = "SHOW TABLES";
                         var tables = new System.Collections.Generic.List<string>();
-                        
+
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                tables.Add(reader[0].ToString());
+                                tables.Add(reader[0].ToString() ?? string.Empty);
                             }
                         }
-                        
+
                         if (tables.Count == 0)
                         {
-                            return $"⚠️ WARNING: Database '{currentDb}' exists but no tables found";
+                            return $"\u26A0\uFE0F WARNING: Database '{currentDb}' exists but no tables found";
                         }
-                        
-                        return $"✅ SUCCESS: Database '{currentDb}' with {tables.Count} tables: {string.Join(", ", tables)}";
+
+                        return $"\u2705 SUCCESS: Database '{currentDb}' with {tables.Count} tables: {string.Join(", ", tables)}";
                     }
                 }
             }
             catch (Exception ex)
             {
-                return $"❌ ERROR: {ex.Message}";
+                return $"\u274C ERROR: {ex.Message}";
             }
         }
 
@@ -123,32 +105,30 @@ namespace ZedCars.Database
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
-                
-                using (var connection = new MySqlConnection(connectionString))
+                using (var connection = DatabaseConnection.GetConnection())
                 {
                     connection.Open();
-                    
+
                     // Test Cars table
                     using (var command = new MySqlCommand("SELECT COUNT(*) as CarCount FROM Cars", connection))
                     {
                         var carCount = command.ExecuteScalar();
-                        
+
                         // Test Admins table
                         command.CommandText = "SELECT COUNT(*) as AdminCount FROM Admins";
                         var adminCount = command.ExecuteScalar();
-                        
+
                         // Test Accessories table
                         command.CommandText = "SELECT COUNT(*) as AccessoryCount FROM Accessories";
                         var accessoryCount = command.ExecuteScalar();
-                        
-                        return $"✅ SUCCESS: Data access working - Cars: {carCount}, Admins: {adminCount}, Accessories: {accessoryCount}";
+
+                        return $"\u2705 SUCCESS: Data access working - Cars: {carCount}, Admins: {adminCount}, Accessories: {accessoryCount}";
                     }
                 }
             }
             catch (Exception ex)
             {
-                return $"❌ ERROR: {ex.Message}";
+                return $"\u274C ERROR: {ex.Message}";
             }
         }
 
@@ -159,24 +139,24 @@ namespace ZedCars.Database
         public static string RunCompleteTest()
         {
             var results = new System.Text.StringBuilder();
-            results.AppendLine("🔍 MySQL Connection Test Results:");
+            results.AppendLine("\uD83D\uDD0D MySQL Connection Test Results:");
             results.AppendLine("================================");
             results.AppendLine();
-            
+
             results.AppendLine("1. Connection Test:");
             results.AppendLine("   " + TestConnection());
             results.AppendLine();
-            
+
             results.AppendLine("2. Database Test:");
             results.AppendLine("   " + TestDatabase());
             results.AppendLine();
-            
+
             results.AppendLine("3. Data Access Test:");
             results.AppendLine("   " + TestDataAccess());
             results.AppendLine();
-            
+
             results.AppendLine("Test completed at: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            
+
             return results.ToString();
         }
     }

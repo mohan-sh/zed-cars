@@ -1,15 +1,16 @@
-using System;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Security;
-using ZedCars.Database;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using ZedCars.Database;
 
 namespace ZedCars.Controllers
 {
     public class AccountController : Controller
     {
-        private UserInfo GetUserFromDb(string username, string password)
+        private UserInfo? GetUserFromDb(string username, string password)
         {
             // First check Admins table
             try
@@ -28,9 +29,9 @@ namespace ZedCars.Controllers
                             if (reader.Read())
                                 return new UserInfo
                                 {
-                                    Username = reader["Username"].ToString(),
-                                    Password = reader["Password"].ToString(),
-                                    FullName = reader["FullName"].ToString(),
+                                    Username = reader["Username"].ToString() ?? string.Empty,
+                                    Password = reader["Password"].ToString() ?? string.Empty,
+                                    FullName = reader["FullName"].ToString() ?? string.Empty,
                                     Role     = "Admin"
                                 };
                         }
@@ -59,10 +60,10 @@ namespace ZedCars.Controllers
                             if (reader.Read())
                                 return new UserInfo
                                 {
-                                    Username = reader["Username"].ToString(),
-                                    Password = reader["Password"].ToString(),
-                                    FullName = reader["FullName"].ToString(),
-                                    Role     = reader["Role"].ToString()
+                                    Username = reader["Username"].ToString() ?? string.Empty,
+                                    Password = reader["Password"].ToString() ?? string.Empty,
+                                    FullName = reader["FullName"].ToString() ?? string.Empty,
+                                    Role     = reader["Role"].ToString() ?? string.Empty
                                 };
                         }
                     }
@@ -75,7 +76,7 @@ namespace ZedCars.Controllers
             return null;
         }
 
-        private UserInfo GetUserByUsername(string username)
+        private UserInfo? GetUserByUsername(string username)
         {
             try
             {
@@ -92,10 +93,10 @@ namespace ZedCars.Controllers
                             if (reader.Read())
                                 return new UserInfo
                                 {
-                                    Username = reader["Username"].ToString(),
-                                    Password = reader["Password"].ToString(),
-                                    FullName = reader["FullName"].ToString(),
-                                    Role     = reader["Role"].ToString()
+                                    Username = reader["Username"].ToString() ?? string.Empty,
+                                    Password = reader["Password"].ToString() ?? string.Empty,
+                                    FullName = reader["FullName"].ToString() ?? string.Empty,
+                                    Role     = reader["Role"].ToString() ?? string.Empty
                                 };
                         }
                     }
@@ -109,9 +110,9 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Account/Landing
-        public ActionResult Landing()
+        public IActionResult Landing()
         {
-            if (Request.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
                 return User.IsInRole("Admin")
                     ? RedirectToAction("Dashboard", "Admin")
                     : RedirectToAction("Index", "Home");
@@ -119,14 +120,14 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Account/Login  (User login)
-        public ActionResult Login()
+        public IActionResult Login()
         {
             return RedirectToAction("Landing");
         }
 
         // POST: /Account/Login
         [HttpPost]
-        public ActionResult Login(string username, string password, bool? remember)
+        public async Task<IActionResult> Login(string username, string password, bool? remember)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -145,13 +146,23 @@ namespace ZedCars.Controllers
                     return RedirectToAction("Landing");
                 }
 
-                var ticket = new FormsAuthenticationTicket(
-                    1, username, DateTime.Now, DateTime.Now.AddMinutes(30),
-                    remember ?? false, user.Role, FormsAuthentication.FormsCookiePath);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("FullName", user.FullName)
+                };
+                var identity  = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var authProps = new AuthenticationProperties
+                {
+                    IsPersistent = remember ?? false,
+                    ExpiresUtc   = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
 
-                var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
-                Response.Cookies.Add(cookie);
-                Session["UserInfo"] = user;
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProps);
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("UserRole", user.Role);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -162,14 +173,14 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Account/AdminLogin
-        public ActionResult AdminLogin()
+        public IActionResult AdminLogin()
         {
             return RedirectToAction("Landing");
         }
 
         // POST: /Account/AdminLogin
         [HttpPost]
-        public ActionResult AdminLogin(string username, string password, bool? remember)
+        public async Task<IActionResult> AdminLogin(string username, string password, bool? remember)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -181,13 +192,23 @@ namespace ZedCars.Controllers
             var user = GetUserFromDb(username, password);
             if (user != null && user.Role == "Admin")
             {
-                var ticket = new FormsAuthenticationTicket(
-                    1, username, DateTime.Now, DateTime.Now.AddMinutes(30),
-                    remember ?? false, user.Role, FormsAuthentication.FormsCookiePath);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("FullName", user.FullName)
+                };
+                var identity  = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var authProps = new AuthenticationProperties
+                {
+                    IsPersistent = remember ?? false,
+                    ExpiresUtc   = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
 
-                var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
-                Response.Cookies.Add(cookie);
-                Session["UserInfo"] = user;
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProps);
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("UserRole", user.Role);
 
                 return RedirectToAction("Dashboard", "Admin");
             }
@@ -198,22 +219,22 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Account/Logout
-        public ActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            FormsAuthentication.SignOut();
-            Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return RedirectToAction("Landing", "Account");
         }
 
         // GET: /Account/Register
-        public ActionResult Register()
+        public IActionResult Register()
         {
             return View();
         }
 
         // POST: /Account/Register
         [HttpPost]
-        public ActionResult Register(string fullName, string email, string username, string password)
+        public IActionResult Register(string fullName, string email, string username, string password)
         {
             try
             {
@@ -245,9 +266,9 @@ namespace ZedCars.Controllers
 
         // GET: /Account/UserProfile
         [Authorize]
-        public ActionResult UserProfile()
+        public IActionResult UserProfile()
         {
-            var user = GetUserByUsername(User.Identity.Name);
+            var user = GetUserByUsername(User.Identity?.Name ?? string.Empty);
             if (user != null) return View(user);
             return RedirectToAction("Login");
         }
@@ -255,9 +276,9 @@ namespace ZedCars.Controllers
 
     public class UserInfo
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role     { get; set; }
-        public string FullName { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role     { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
     }
 }

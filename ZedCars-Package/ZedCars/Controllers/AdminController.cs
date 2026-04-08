@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZedCars.Database;
 
 namespace ZedCars.Controllers
@@ -8,19 +7,8 @@ namespace ZedCars.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        // Demo vehicles for testing
-        private static readonly List<Vehicle> Vehicles = new List<Vehicle>
-        {
-            new Vehicle { Id = 1, Brand = "Toyota", Model = "Camry", Year = 2023, Price = 25000, Status = "Available" },
-            new Vehicle { Id = 2, Brand = "Honda", Model = "CR-V", Year = 2023, Price = 32000, Status = "Available" },
-            new Vehicle { Id = 3, Brand = "Ford", Model = "F-150", Year = 2022, Price = 45000, Status = "Reserved" },
-            new Vehicle { Id = 4, Brand = "BMW", Model = "5 Series", Year = 2023, Price = 55000, Status = "Available" },
-            new Vehicle { Id = 5, Brand = "Tesla", Model = "Model 3", Year = 2023, Price = 60000, Status = "Sold" },
-            new Vehicle { Id = 6, Brand = "Mercedes", Model = "GLE", Year = 2022, Price = 65000, Status = "Available" }
-        };
-
         // GET: /Admin/Dashboard
-        public ActionResult Dashboard()
+        public IActionResult Dashboard()
         {
             try
             {
@@ -46,7 +34,7 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Admin/Inventory
-        public ActionResult Inventory()
+        public IActionResult Inventory()
         {
             var cars = new List<ZedCars.Models.Car>();
             try
@@ -57,15 +45,15 @@ namespace ZedCars.Controllers
                     while (reader.Read())
                         cars.Add(new ZedCars.Models.Car
                         {
-                            CarId        = reader.GetInt32("CarId"),
-                            Brand        = reader["Brand"].ToString(),
-                            Model        = reader["Model"].ToString(),
-                            Year         = reader["Year"].ToString(),
-                            Price        = reader.GetDecimal("Price"),
-                            FuelType     = reader["FuelType"].ToString(),
-                            Transmission = reader["Transmission"].ToString(),
-                            ImageUrl     = reader["ImageUrl"].ToString(),
-                            StockQuantity= reader.GetInt32("StockQuantity")
+                            CarId         = reader.GetInt32("CarId"),
+                            Brand         = reader["Brand"].ToString() ?? string.Empty,
+                            Model         = reader["Model"].ToString() ?? string.Empty,
+                            Year          = reader["Year"].ToString() ?? string.Empty,
+                            Price         = reader.GetDecimal("Price"),
+                            FuelType      = reader["FuelType"].ToString() ?? string.Empty,
+                            Transmission  = reader["Transmission"].ToString() ?? string.Empty,
+                            ImageUrl      = reader["ImageUrl"].ToString() ?? string.Empty,
+                            StockQuantity = reader.GetInt32("StockQuantity")
                         });
                 }
             }
@@ -74,14 +62,14 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Admin/AddVehicle
-        public ActionResult AddVehicle()
+        public IActionResult AddVehicle()
         {
             return View();
         }
 
         // POST: /Admin/AddVehicle
         [HttpPost]
-        public ActionResult AddVehicle(ZedCars.Models.Car car)
+        public IActionResult AddVehicle(ZedCars.Models.Car car)
         {
             try
             {
@@ -103,9 +91,9 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Admin/EditVehicle/5
-        public ActionResult EditVehicle(int id)
+        public IActionResult EditVehicle(int id)
         {
-            ZedCars.Models.Car car = null;
+            ZedCars.Models.Car? car = null;
             try
             {
                 using (var reader = DatabaseConnection.ExecuteReader(
@@ -114,38 +102,38 @@ namespace ZedCars.Controllers
                     if (reader.Read())
                         car = new ZedCars.Models.Car
                         {
-                            CarId        = reader.GetInt32("CarId"),
-                            Brand        = reader["Brand"].ToString(),
-                            Model        = reader["Model"].ToString(),
-                            Year         = reader["Year"].ToString(),
-                            Price        = reader.GetDecimal("Price"),
-                            FuelType     = reader["FuelType"].ToString(),
-                            Transmission = reader["Transmission"].ToString(),
-                            Description  = reader["Description"].ToString(),
-                            ImageUrl     = reader["ImageUrl"].ToString(),
-                            Color        = reader["Color"].ToString(),
-                            Mileage      = reader["Mileage"] == DBNull.Value ? (int?)null : reader.GetInt32("Mileage"),
-                            StockQuantity= reader.GetInt32("StockQuantity")
+                            CarId         = reader.GetInt32("CarId"),
+                            Brand         = reader["Brand"].ToString() ?? string.Empty,
+                            Model         = reader["Model"].ToString() ?? string.Empty,
+                            Year          = reader["Year"].ToString() ?? string.Empty,
+                            Price         = reader.GetDecimal("Price"),
+                            FuelType      = reader["FuelType"].ToString() ?? string.Empty,
+                            Transmission  = reader["Transmission"].ToString() ?? string.Empty,
+                            Description   = reader["Description"].ToString() ?? string.Empty,
+                            ImageUrl      = reader["ImageUrl"].ToString() ?? string.Empty,
+                            Color         = reader["Color"].ToString() ?? string.Empty,
+                            Mileage       = reader["Mileage"] == DBNull.Value ? (int?)null : reader.GetInt32("Mileage"),
+                            StockQuantity = reader.GetInt32("StockQuantity")
                         };
                 }
             }
             catch { }
-            if (car == null) return HttpNotFound();
+            if (car == null) return NotFound();
             return View(car);
         }
 
         // POST: /Admin/EditVehicle/5
         [HttpPost]
-        public ActionResult EditVehicle(ZedCars.Models.Car car)
+        public IActionResult EditVehicle(ZedCars.Models.Car car)
         {
             try
             {
                 string sql = string.Format(
                     "UPDATE Cars SET Brand='{0}', Model='{1}', Year='{2}', Price={3}, FuelType='{4}', Transmission='{5}', Description='{6}', ImageUrl='{7}', Color='{8}', Mileage={9}, StockQuantity={10} WHERE CarId={11}",
                     car.Brand, car.Model, car.Year, car.Price, car.FuelType, car.Transmission,
-                    (car.Description ?? "").Replace("'", "''"),
-                    (car.ImageUrl ?? "").Replace("'", "''"),
-                    (car.Color ?? "").Replace("'", "''"),
+                    (car.Description ?? string.Empty).Replace("'", "''"),
+                    (car.ImageUrl ?? string.Empty).Replace("'", "''"),
+                    (car.Color ?? string.Empty).Replace("'", "''"),
                     car.Mileage.HasValue ? car.Mileage.Value.ToString() : "0",
                     car.StockQuantity, car.CarId);
                 DatabaseConnection.ExecuteNonQuery(sql);
@@ -159,10 +147,10 @@ namespace ZedCars.Controllers
         }
 
         // GET: /Admin/DeleteVehicle/5
-        public ActionResult DeleteVehicle(int? id)
+        public IActionResult DeleteVehicle(int? id)
         {
             if (!id.HasValue) return RedirectToAction("Inventory");
-            ZedCars.Models.Car car = null;
+            ZedCars.Models.Car? car = null;
             try
             {
                 using (var reader = DatabaseConnection.ExecuteReader(
@@ -172,21 +160,21 @@ namespace ZedCars.Controllers
                         car = new ZedCars.Models.Car
                         {
                             CarId = reader.GetInt32("CarId"),
-                            Brand = reader["Brand"].ToString(),
-                            Model = reader["Model"].ToString(),
-                            Year  = reader["Year"].ToString(),
+                            Brand = reader["Brand"].ToString() ?? string.Empty,
+                            Model = reader["Model"].ToString() ?? string.Empty,
+                            Year  = reader["Year"].ToString() ?? string.Empty,
                             Price = reader.GetDecimal("Price")
                         };
                 }
             }
             catch { }
-            if (car == null) return HttpNotFound();
+            if (car == null) return NotFound();
             return View(car);
         }
 
         // POST: /Admin/DeleteVehicle/5
         [HttpPost, ActionName("DeleteVehicle")]
-        public ActionResult DeleteVehicleConfirmed(int id)
+        public IActionResult DeleteVehicleConfirmed(int id)
         {
             try
             {
@@ -199,9 +187,9 @@ namespace ZedCars.Controllers
             }
             return RedirectToAction("Inventory");
         }
-        
+
         // GET: /Admin/ManageUsers
-        public ActionResult ManageUsers()
+        public IActionResult ManageUsers()
         {
             var users = new List<UserListItem>();
             try
@@ -215,20 +203,20 @@ namespace ZedCars.Controllers
                     while (reader.Read())
                         users.Add(new UserListItem
                         {
-                            Username    = reader["Username"].ToString(),
-                            FullName    = reader["FullName"].ToString(),
-                            Role        = reader["Role"].ToString(),
+                            Username    = reader["Username"].ToString() ?? string.Empty,
+                            FullName    = reader["FullName"].ToString() ?? string.Empty,
+                            Role        = reader["Role"].ToString() ?? string.Empty,
                             IsActive    = reader.GetBoolean("IsActive"),
-                            CreatedDate = reader["CreatedDate"].ToString()
+                            CreatedDate = reader["CreatedDate"].ToString() ?? string.Empty
                         });
                 }
             }
             catch { }
             return View(users);
         }
-        
+
         // GET: /Admin/Reports
-        public ActionResult Reports()
+        public IActionResult Reports()
         {
             try
             {
@@ -242,7 +230,7 @@ namespace ZedCars.Controllers
                 using (var reader = DatabaseConnection.ExecuteReader(
                     "SELECT Brand, COUNT(*) as Count FROM Cars WHERE IsActive=TRUE GROUP BY Brand ORDER BY Count DESC"))
                     while (reader.Read())
-                        brandStats.Add(new object[] { reader["Brand"].ToString(), reader["Count"] });
+                        brandStats.Add(new object[] { reader["Brand"].ToString() ?? string.Empty, reader["Count"] });
                 ViewBag.BrandStats = brandStats;
 
                 // Recent cars
@@ -267,19 +255,19 @@ namespace ZedCars.Controllers
     public class Vehicle
     {
         public int Id { get; set; }
-        public string Brand { get; set; }
-        public string Model { get; set; }
+        public string Brand { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
         public int Year { get; set; }
         public decimal Price { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 
     public class UserListItem
     {
-        public string Username    { get; set; }
-        public string FullName    { get; set; }
-        public string Role        { get; set; }
+        public string Username    { get; set; } = string.Empty;
+        public string FullName    { get; set; } = string.Empty;
+        public string Role        { get; set; } = string.Empty;
         public bool   IsActive    { get; set; }
-        public string CreatedDate { get; set; }
+        public string CreatedDate { get; set; } = string.Empty;
     }
 }

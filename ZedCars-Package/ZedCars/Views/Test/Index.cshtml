@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Test Page";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
 }
@@ -7,7 +7,7 @@
     <h1>&#129514; ZedCars Application Test</h1>
     
     <div class="test-success">
-        <h2>✅ SUCCESS!</h2>
+        <h2>&#10003; SUCCESS!</h2>
         <p>If you can see this page, your ZedCars application is running correctly!</p>
     </div>
     
@@ -16,9 +16,9 @@
         <ul>
             <li><strong>Status:</strong> Application is running</li>
             <li><strong>Current Time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</li>
-            <li><strong>Server:</strong> @Request.ServerVariables["SERVER_NAME"]:@Request.ServerVariables["SERVER_PORT"]</li>
-            <li><strong>Framework:</strong> ASP.NET MVC</li>
-            <li><strong>View Engine:</strong> Razor (Converted from ASPX)</li>
+            <li><strong>Server:</strong> @ViewBag.ServerInfo</li>
+            <li><strong>Framework:</strong> ASP.NET Core MVC (.NET 8.0)</li>
+            <li><strong>View Engine:</strong> Razor</li>
         </ul>
     </div>
     
