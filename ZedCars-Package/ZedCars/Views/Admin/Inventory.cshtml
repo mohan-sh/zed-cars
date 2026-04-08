@@ -1,3 +1,4 @@
+@model IEnumerable<ZedCars.Models.Car>
 @{
     ViewBag.Title = "Admin Inventory";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
@@ -6,571 +7,80 @@
 <div class="admin-header">
     <h1>Inventory Management</h1>
     <p class="lead">Manage your vehicle inventory</p>
-    
     <div class="admin-actions">
         <a href="/Admin/Dashboard" class="btn btn-secondary">Back to Dashboard</a>
         <a href="/Admin/AddVehicle" class="btn btn-primary">Add New Vehicle</a>
     </div>
 </div>
 
-<div class="inventory-controls">
-    <div class="search-section">
-        <div class="search-group">
-            <input type="text" id="search-input" class="form-control" placeholder="Search by brand, model, VIN...">
-            <button id="search-button" class="btn btn-outline">Search</button>
-        </div>
-    </div>
-    
-    <div class="filter-section">
-        <div class="filter-group">
-            <select id="status-filter" class="form-control">
-                <option value="">All Status</option>
-                <option value="Available">Available</option>
-                <option value="Reserved">Reserved</option>
-                <option value="Sold">Sold</option>
-                <option value="Maintenance">Maintenance</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <select id="brand-filter" class="form-control">
-                <option value="">All Brands</option>
-                <option value="BMW">BMW</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-                <option value="Ford">Ford</option>
-                <option value="Tesla">Tesla</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <select id="sort-filter" class="form-control">
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="brand">Brand A-Z</option>
-            </select>
-        </div>
-        
-        <button id="clear-filters" class="btn btn-outline">Clear Filters</button>
-    </div>
-</div>
-
-<div class="inventory-stats">
-    <div class="stat-card">
-        <div class="stat-value">23</div>
-        <div class="stat-label">Total Vehicles</div>
-    </div>
-    <div class="stat-card available">
-        <div class="stat-value">18</div>
-        <div class="stat-label">Available</div>
-    </div>
-    <div class="stat-card reserved">
-        <div class="stat-value">3</div>
-        <div class="stat-label">Reserved</div>
-    </div>
-    <div class="stat-card sold">
-        <div class="stat-value">2</div>
-        <div class="stat-label">Sold</div>
-    </div>
-</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <p style="color:green;font-weight:bold;padding:10px;">@TempData["SuccessMessage"]</p>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <p style="color:red;font-weight:bold;padding:10px;">@TempData["ErrorMessage"]</p>
+}
 
 <div class="inventory-table-container">
-    <table class="inventory-table" id="inventory-table">
+    <table class="inventory-table">
         <thead>
             <tr>
                 <th>Image</th>
-                <th>Vehicle</th>
+                <th>Brand</th>
+                <th>Model</th>
                 <th>Year</th>
                 <th>Price</th>
-                <th>Status</th>
-                <th>VIN</th>
-                <th>Added</th>
+                <th>Fuel</th>
+                <th>Transmission</th>
+                <th>Stock</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr data-status="Available" data-brand="BMW" data-price="55000">
-                <td>
-                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&q=60" alt="BMW 5 Series" class="vehicle-thumb">
-                </td>
-                <td>
-                    <div class="vehicle-info">
-                        <div class="vehicle-name">BMW 5 Series</div>
-                        <div class="vehicle-details">Sedan • Automatic • Gasoline</div>
-                    </div>
-                </td>
-                <td>2023</td>
-                <td class="price">$55,000</td>
-                <td><span class="status-badge available">Available</span></td>
-                <td class="vin">WBAJA7C50HWA12345</td>
-                <td>2 days ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="/Home/VehicleDetail/1" class="btn btn-sm btn-info" title="View">&#128065;</a>
-                        <a href="/Admin/EditVehicle/1" class="btn btn-sm btn-warning" title="Edit">&#9999;</a>
-                        <a href="/Admin/DeleteVehicle/1" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">&#128465;</a>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-status="Available" data-brand="Tesla" data-price="60000">
-                <td>
-                    <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&q=60" alt="Tesla Model 3" class="vehicle-thumb">
-                </td>
-                <td>
-                    <div class="vehicle-info">
-                        <div class="vehicle-name">Tesla Model 3</div>
-                        <div class="vehicle-details">Sedan • Automatic • Electric</div>
-                    </div>
-                </td>
-                <td>2023</td>
-                <td class="price">$60,000</td>
-                <td><span class="status-badge available">Available</span></td>
-                <td class="vin">5YJ3E1EA4KF123456</td>
-                <td>1 week ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="/Home/VehicleDetail/2" class="btn btn-sm btn-info" title="View">&#128065;</a>
-                        <a href="/Admin/EditVehicle/2" class="btn btn-sm btn-warning" title="Edit">&#9999;</a>
-                        <a href="/Admin/DeleteVehicle/2" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">&#128465;</a>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-status="Reserved" data-brand="Honda" data-price="35000">
-                <td>
-                    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&q=60" alt="Honda CR-V" class="vehicle-thumb">
-                </td>
-                <td>
-                    <div class="vehicle-info">
-                        <div class="vehicle-name">Honda CR-V</div>
-                        <div class="vehicle-details">SUV • Automatic • Gasoline</div>
-                    </div>
-                </td>
-                <td>2023</td>
-                <td class="price">$35,000</td>
-                <td><span class="status-badge reserved">Reserved</span></td>
-                <td class="vin">2HKRM4H75NH123456</td>
-                <td>2 weeks ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="/Home/VehicleDetail/3" class="btn btn-sm btn-info" title="View">&#128065;</a>
-                        <a href="/Admin/EditVehicle/3" class="btn btn-sm btn-warning" title="Edit">&#9999;</a>
-                        <a href="/Admin/DeleteVehicle/3" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">&#128465;</a>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-status="Sold" data-brand="Toyota" data-price="25000">
-                <td>
-                    <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&q=60" alt="Toyota Camry" class="vehicle-thumb">
-                </td>
-                <td>
-                    <div class="vehicle-info">
-                        <div class="vehicle-name">Toyota Camry</div>
-                        <div class="vehicle-details">Sedan • Automatic • Gasoline</div>
-                    </div>
-                </td>
-                <td>2022</td>
-                <td class="price">$25,000</td>
-                <td><span class="status-badge sold">Sold</span></td>
-                <td class="vin">4T1C11AK8NU123456</td>
-                <td>1 month ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="/Home/VehicleDetail/4" class="btn btn-sm btn-info" title="View">&#128065;</a>
-                        <a href="/Admin/EditVehicle/4" class="btn btn-sm btn-warning" title="Edit">&#9999;</a>
-                        <a href="/Admin/DeleteVehicle/4" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">&#128465;</a>
-                    </div>
-                </td>
-            </tr>
-            
-            <tr data-status="Available" data-brand="Ford" data-price="45000">
-                <td>
-                    <img src="https://images.unsplash.com/photo-1605893477799-b99e3b8b93fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&q=60" alt="Ford F-150" class="vehicle-thumb">
-                </td>
-                <td>
-                    <div class="vehicle-info">
-                        <div class="vehicle-name">Ford F-150</div>
-                        <div class="vehicle-details">Truck • Automatic • Gasoline</div>
-                    </div>
-                </td>
-                <td>2023</td>
-                <td class="price">$45,000</td>
-                <td><span class="status-badge available">Available</span></td>
-                <td class="vin">1FTFW1E50NFA12345</td>
-                <td>3 weeks ago</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="/Home/VehicleDetail/5" class="btn btn-sm btn-info" title="View">&#128065;</a>
-                        <a href="/Admin/EditVehicle/5" class="btn btn-sm btn-warning" title="Edit">&#9999;</a>
-                        <a href="/Admin/DeleteVehicle/5" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">&#128465;</a>
-                    </div>
-                </td>
-            </tr>
+            @foreach (var car in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(car.ImageUrl))
+                        {
+                            <img src="@car.ImageUrl" alt="@car.Brand @car.Model" class="vehicle-thumb" />
+                        }
+                    </td>
+                    <td>@car.Brand</td>
+                    <td>@car.Model</td>
+                    <td>@car.Year</td>
+                    <td class="price">$@string.Format("{0:N0}", car.Price)</td>
+                    <td>@car.FuelType</td>
+                    <td>@car.Transmission</td>
+                    <td>@car.StockQuantity</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/Admin/EditVehicle/@car.CarId" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="/Admin/DeleteVehicle/@car.CarId" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
-<div class="pagination-container">
-    <div class="pagination-info">
-        Showing 1-5 of 23 vehicles
-    </div>
-    <div class="pagination">
-        <button class="btn btn-sm" disabled>Previous</button>
-        <button class="btn btn-sm active">1</button>
-        <button class="btn btn-sm">2</button>
-        <button class="btn btn-sm">3</button>
-        <button class="btn btn-sm">Next</button>
-    </div>
-</div>
-
 <style>
-    .admin-header {
-        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
-        color: white;
-        padding: 40px 20px;
-        text-align: center;
-        margin: -30px -30px 40px -30px;
-        border-radius: 8px 8px 0 0;
-    }
-    
-    .admin-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-    
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-    
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-    
-    .btn-outline {
-        background: transparent;
-        border: 1px solid #6c757d;
-        color: #6c757d;
-    }
-    
-    .btn-sm {
-        padding: 4px 8px;
-        font-size: 0.9em;
-    }
-    
-    .btn-info {
-        background: #17a2b8;
-        color: white;
-    }
-    
-    .btn-warning {
-        background: #ffc107;
-        color: #212529;
-    }
-    
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .inventory-controls {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
-    
-    .search-section {
-        margin-bottom: 15px;
-    }
-    
-    .search-group {
-        display: flex;
-        gap: 10px;
-        max-width: 400px;
-    }
-    
-    .filter-section {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    
-    .filter-group {
-        min-width: 150px;
-    }
-    
-    .form-control {
-        padding: 8px 12px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-    
-    .inventory-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .stat-card {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid #007bff;
-    }
-    
-    .stat-card.available {
-        border-left-color: #28a745;
-    }
-    
-    .stat-card.reserved {
-        border-left-color: #ffc107;
-    }
-    
-    .stat-card.sold {
-        border-left-color: #6c757d;
-    }
-    
-    .stat-value {
-        font-size: 2em;
-        font-weight: bold;
-        color: #343a40;
-    }
-    
-    .stat-label {
-        color: #6c757d;
-        font-size: 0.9em;
-    }
-    
-    .inventory-table-container {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        margin-bottom: 20px;
-    }
-    
-    .inventory-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .inventory-table th {
-        background: #f8f9fa;
-        padding: 15px 10px;
-        text-align: left;
-        font-weight: bold;
-        color: #495057;
-        border-bottom: 2px solid #dee2e6;
-    }
-    
-    .inventory-table td {
-        padding: 15px 10px;
-        border-bottom: 1px solid #dee2e6;
-        vertical-align: middle;
-    }
-    
-    .inventory-table tr:hover {
-        background: #f8f9fa;
-    }
-    
-    .vehicle-thumb {
-        width: 60px;
-        height: 45px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-    
-    .vehicle-info {
-        min-width: 150px;
-    }
-    
-    .vehicle-name {
-        font-weight: bold;
-        color: #343a40;
-        margin-bottom: 3px;
-    }
-    
-    .vehicle-details {
-        font-size: 0.9em;
-        color: #6c757d;
-    }
-    
-    .price {
-        font-weight: bold;
-        color: #28a745;
-    }
-    
-    .status-badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.8em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-    
-    .status-badge.available {
-        background: #d4edda;
-        color: #155724;
-    }
-    
-    .status-badge.reserved {
-        background: #fff3cd;
-        color: #856404;
-    }
-    
-    .status-badge.sold {
-        background: #f8d7da;
-        color: #721c24;
-    }
-    
-    .vin {
-        font-family: monospace;
-        font-size: 0.9em;
-        color: #6c757d;
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 5px;
-    }
-    
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .pagination-info {
-        color: #6c757d;
-    }
-    
-    .pagination {
-        display: flex;
-        gap: 5px;
-    }
-    
-    .pagination .btn.active {
-        background: #007bff;
-        color: white;
-    }
-    
-    @@media (max-width: 768px) {
-        .inventory-table-container {
-            overflow-x: auto;
-        }
-        
-        .inventory-table {
-            min-width: 800px;
-        }
-        
-        .filter-section {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .pagination-container {
-            flex-direction: column;
-            gap: 10px;
-        }
-    }
+    .admin-header { background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); color: white; padding: 40px 20px; text-align: center; margin: -30px -30px 40px -30px; border-radius: 8px 8px 0 0; }
+    .admin-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 8px 16px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; font-weight: bold; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-sm { padding: 4px 10px; font-size: 0.9em; }
+    .btn-warning { background: #ffc107; color: #212529; }
+    .btn-danger { background: #dc3545; color: white; }
+    .inventory-table-container { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: auto; }
+    .inventory-table { width: 100%; border-collapse: collapse; }
+    .inventory-table th { background: #f8f9fa; padding: 12px 10px; text-align: left; border-bottom: 2px solid #dee2e6; }
+    .inventory-table td { padding: 12px 10px; border-bottom: 1px solid #dee2e6; vertical-align: middle; }
+    .inventory-table tr:hover { background: #f8f9fa; }
+    .vehicle-thumb { width: 60px; height: 45px; object-fit: cover; border-radius: 4px; }
+    .price { font-weight: bold; color: #28a745; }
+    .action-buttons { display: flex; gap: 5px; }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('search-input');
-        const statusFilter = document.getElementById('status-filter');
-        const brandFilter = document.getElementById('brand-filter');
-        const sortFilter = document.getElementById('sort-filter');
-        const clearFiltersBtn = document.getElementById('clear-filters');
-        const tableRows = document.querySelectorAll('#inventory-table tbody tr');
-        
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusValue = statusFilter.value;
-            const brandValue = brandFilter.value;
-            
-            tableRows.forEach(row => {
-                const vehicleName = row.querySelector('.vehicle-name').textContent.toLowerCase();
-                const vin = row.querySelector('.vin').textContent.toLowerCase();
-                const status = row.dataset.status;
-                const brand = row.dataset.brand;
-                
-                const matchesSearch = vehicleName.includes(searchTerm) || vin.includes(searchTerm);
-                const matchesStatus = !statusValue || status === statusValue;
-                const matchesBrand = !brandValue || brand === brandValue;
-                
-                if (matchesSearch && matchesStatus && matchesBrand) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        
-        function sortTable() {
-            const sortValue = sortFilter.value;
-            const tbody = document.querySelector('#inventory-table tbody');
-            const rows = Array.from(tableRows);
-            
-            rows.sort((a, b) => {
-                switch (sortValue) {
-                    case 'price-low':
-                        return parseInt(a.dataset.price) - parseInt(b.dataset.price);
-                    case 'price-high':
-                        return parseInt(b.dataset.price) - parseInt(a.dataset.price);
-                    case 'brand':
-                        return a.dataset.brand.localeCompare(b.dataset.brand);
-                    default:
-                        return 0;
-                }
-            });
-            
-            rows.forEach(row => tbody.appendChild(row));
-        }
-        
-        searchInput.addEventListener('input', filterTable);
-        statusFilter.addEventListener('change', filterTable);
-        brandFilter.addEventListener('change', filterTable);
-        sortFilter.addEventListener('change', sortTable);
-        
-        clearFiltersBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            statusFilter.value = '';
-            brandFilter.value = '';
-            sortFilter.value = 'newest';
-            filterTable();
-            sortTable();
-        });
-    });
-</script>

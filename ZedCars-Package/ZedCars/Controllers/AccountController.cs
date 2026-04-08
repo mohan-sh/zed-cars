@@ -108,7 +108,17 @@ namespace ZedCars.Controllers
             return null;
         }
 
-        // GET: /Account/Login
+        // GET: /Account/Landing
+        public ActionResult Landing()
+        {
+            if (Request.IsAuthenticated)
+                return User.IsInRole("Admin")
+                    ? RedirectToAction("Dashboard", "Admin")
+                    : RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        // GET: /Account/Login  (User login)
         public ActionResult Login()
         {
             return View();
@@ -127,6 +137,12 @@ namespace ZedCars.Controllers
             var user = GetUserFromDb(username, password);
             if (user != null)
             {
+                if (user.Role == "Admin")
+                {
+                    TempData["ErrorMessage"] = "Admins must use the Admin Login page.";
+                    return View();
+                }
+
                 var ticket = new FormsAuthenticationTicket(
                     1, username, DateTime.Now, DateTime.Now.AddMinutes(30),
                     remember ?? false, user.Role, FormsAuthentication.FormsCookiePath);
@@ -135,12 +151,44 @@ namespace ZedCars.Controllers
                 Response.Cookies.Add(cookie);
                 Session["UserInfo"] = user;
 
-                return user.Role == "Admin"
-                    ? RedirectToAction("Dashboard", "Admin")
-                    : RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             TempData["ErrorMessage"] = "Invalid username or password.";
+            return View();
+        }
+
+        // GET: /Account/AdminLogin
+        public ActionResult AdminLogin()
+        {
+            return View();
+        }
+
+        // POST: /Account/AdminLogin
+        [HttpPost]
+        public ActionResult AdminLogin(string username, string password, bool? remember)
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                TempData["ErrorMessage"] = "Username and password are required.";
+                return View();
+            }
+
+            var user = GetUserFromDb(username, password);
+            if (user != null && user.Role == "Admin")
+            {
+                var ticket = new FormsAuthenticationTicket(
+                    1, username, DateTime.Now, DateTime.Now.AddMinutes(30),
+                    remember ?? false, user.Role, FormsAuthentication.FormsCookiePath);
+
+                var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
+                Response.Cookies.Add(cookie);
+                Session["UserInfo"] = user;
+
+                return RedirectToAction("Dashboard", "Admin");
+            }
+
+            TempData["ErrorMessage"] = "Invalid admin credentials.";
             return View();
         }
 
@@ -149,7 +197,7 @@ namespace ZedCars.Controllers
         {
             FormsAuthentication.SignOut();
             Session.Clear();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Landing", "Account");
         }
 
         // GET: /Account/Register

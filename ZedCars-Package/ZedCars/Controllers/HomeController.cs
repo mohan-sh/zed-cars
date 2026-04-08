@@ -36,6 +36,7 @@ namespace ZedCars.Controllers
             catch { }
             return cars;
         }
+        [Authorize]
         public ActionResult Index()
         {
             ViewBag.Message = "Welcome to ZedCars!";
@@ -54,6 +55,27 @@ namespace ZedCars.Controllers
         public ActionResult Contact()
         {
             ViewBag.Message = "Contact Us";
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Contact(Models.ContactMessage model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            string query = string.Format(
+                "INSERT INTO ContactMessages (Name, Email, Phone, Subject, Message) VALUES ('{0}','{1}','{2}','{3}','{4}')",
+                model.Name.Replace("'", "''"),
+                model.Email.Replace("'", "''"),
+                (model.Phone ?? "").Replace("'", "''"),
+                (model.Subject ?? "").Replace("'", "''"),
+                model.Message.Replace("'", "''")
+            );
+            Database.DatabaseConnection.ExecuteNonQuery(query);
+
+            ViewBag.Success = "Your message has been sent!";
             return View();
         }
         

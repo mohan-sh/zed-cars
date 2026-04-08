@@ -1,0 +1,176 @@
+@{
+    ViewBag.Title = "Admin Sign In";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="login-container">
+    <div class="login-form">
+        <h1>&#128274; Admin Sign In</h1>
+        <p class="subtitle">ZedCars Administration Portal</p>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <form action="/Account/AdminLogin" method="post">
+            <div class="form-group">
+                <label for="username">Admin Username</label>
+                <input type="text" id="username" name="username" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required />
+            </div>
+
+            <div class="form-group remember-me">
+                <input type="checkbox" id="remember" name="remember" />
+                <label for="remember">Remember me</label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-admin">Sign In as Admin</button>
+            </div>
+
+            <div class="form-footer">
+                <p>Not an admin? <a href="/Account/Login">User Sign In</a></p>
+            </div>
+        </form>
+
+        <div class="demo-accounts">
+            <h3>Demo Admin Account</h3>
+            <div class="demo-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>admin</td>
+                            <td>admin123</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-info admin-info">
+        <h2>Admin Dashboard Access</h2>
+        <p>Sign in with your administrator credentials to manage the ZedCars platform.</p>
+
+        <div class="benefit-list">
+            <div class="benefit-item">
+                <div class="benefit-icon">&#128200;</div>
+                <div class="benefit-text">
+                    <h3>Analytics Dashboard</h3>
+                    <p>View sales stats and inventory metrics</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">&#128663;</div>
+                <div class="benefit-text">
+                    <h3>Manage Inventory</h3>
+                    <p>Add, edit, or remove vehicle listings</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">&#128101;</div>
+                <div class="benefit-text">
+                    <h3>User Management</h3>
+                    <p>Manage customer accounts and roles</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">&#128196;</div>
+                <div class="benefit-text">
+                    <h3>Reports</h3>
+                    <p>Generate and export business reports</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .login-form {
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form h1 { color: #343a40; margin-bottom: 10px; text-align: center; }
+    .subtitle { text-align: center; color: #6c757d; margin-bottom: 30px; }
+
+    .alert { padding: 12px; border-radius: 4px; margin-bottom: 20px; }
+    .alert-danger { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #495057; }
+
+    .form-control {
+        width: 100%; padding: 12px; border: 1px solid #ced4da;
+        border-radius: 4px; font-size: 16px; transition: border-color 0.3s;
+    }
+    .form-control:focus { outline: none; border-color: #dc3545; box-shadow: 0 0 0 2px rgba(220,53,69,0.25); }
+
+    .remember-me { display: flex; align-items: center; gap: 8px; }
+    .remember-me input[type="checkbox"] { width: auto; }
+
+    .form-actions { margin-bottom: 20px; }
+
+    .btn {
+        display: inline-block; padding: 12px 24px; border: none;
+        border-radius: 4px; text-align: center; cursor: pointer;
+        font-weight: bold; transition: all 0.3s; width: 100%;
+    }
+    .btn-admin { background: #dc3545; color: white; }
+    .btn-admin:hover { background: #b02a37; }
+
+    .form-footer { text-align: center; border-top: 1px solid #dee2e6; padding-top: 20px; }
+    .form-footer a { color: #dc3545; text-decoration: none; }
+    .form-footer a:hover { text-decoration: underline; }
+
+    .demo-accounts { margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+    .demo-accounts h3 { margin-bottom: 15px; color: #495057; text-align: center; }
+    .demo-table table { width: 100%; border-collapse: collapse; }
+    .demo-table th, .demo-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+    .demo-table th { background: #e9ecef; font-weight: bold; color: #495057; }
+    .demo-table td { color: #6c757d; font-family: monospace; }
+
+    .admin-info {
+        padding: 40px;
+        background: linear-gradient(135deg, #c0392b 0%, #8e1a12 100%);
+        color: white;
+        border-radius: 8px;
+    }
+    .admin-info h2 { margin-bottom: 15px; }
+    .admin-info > p { margin-bottom: 30px; opacity: 0.9; }
+
+    .benefit-list { display: flex; flex-direction: column; gap: 20px; }
+    .benefit-item { display: flex; align-items: flex-start; gap: 15px; }
+    .benefit-icon { font-size: 2em; flex-shrink: 0; }
+    .benefit-text h3 { margin: 0 0 5px 0; font-size: 1.1em; }
+    .benefit-text p { margin: 0; opacity: 0.8; font-size: 0.9em; }
+
+    @@media (max-width: 768px) {
+        .login-container { grid-template-columns: 1fr; gap: 20px; padding: 10px; }
+        .login-form, .admin-info { padding: 20px; }
+    }
+</style>

@@ -121,7 +121,7 @@
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\Accessory.cs" />
     <Compile Include="Models\LoginModel.cs" />
-    <Compile Include="Database\DatabaseConnection.cs" />
+    <Compile Include="Models\ContactMessage.cs" />    <Compile Include="Database\DatabaseConnection.cs" />
     <Compile Include="Database\DatabaseHealthCheck.cs" />
     <Compile Include="Database\DataSeeder.cs" />
     <Compile Include="Database\CarSeeder.cs" />

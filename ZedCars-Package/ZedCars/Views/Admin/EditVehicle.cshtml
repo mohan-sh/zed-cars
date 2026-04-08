@@ -1,3 +1,4 @@
+@model ZedCars.Models.Car
 @{
     ViewBag.Title = "Edit Vehicle";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
@@ -6,521 +7,113 @@
 <div class="admin-header">
     <h1>Edit Vehicle</h1>
     <p class="lead">Update vehicle information</p>
-    
     <div class="admin-actions">
-        <a href="/Admin/Dashboard" class="btn btn-secondary">Back to Dashboard</a>
-        <a href="/Admin/Inventory" class="btn btn-secondary">View Inventory</a>
+        <a href="/Admin/Inventory" class="btn btn-secondary">Back to Inventory</a>
     </div>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
+    <p style="color:green;font-weight:bold;padding:10px;">@TempData["SuccessMessage"]</p>
 }
-
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
+    <p style="color:red;font-weight:bold;padding:10px;">@TempData["ErrorMessage"]</p>
 }
 
-<div class="vehicle-form-container">
-    <form action="/Admin/EditVehicle" method="post" enctype="multipart/form-data" id="edit-vehicle-form">
-        <input type="hidden" name="VehicleId" value="1" />
-        
-        <div class="form-section">
-            <h3>Basic Information</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="brand">Brand</label>
-                    <select id="brand" name="Brand" class="form-control" required>
-                        <option value="">Select Brand</option>
-                        <option value="Toyota">Toyota</option>
-                        <option value="Honda">Honda</option>
-                        <option value="Ford">Ford</option>
-                        <option value="BMW" selected>BMW</option>
-                        <option value="Mercedes">Mercedes</option>
-                        <option value="Tesla">Tesla</option>
-                        <option value="Audi">Audi</option>
-                        <option value="Lexus">Lexus</option>
-                        <option value="Jeep">Jeep</option>
-                        <option value="Chevrolet">Chevrolet</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="model">Model</label>
-                    <input type="text" id="model" name="Model" class="form-control" value="5 Series" required>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <input type="number" id="year" name="Year" class="form-control" value="2023" min="1900" max="2030" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="price">Price ($)</label>
-                    <input type="number" id="price" name="Price" class="form-control" value="55000" min="0" step="0.01" required>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="Status" class="form-control" required>
-                        <option value="Available" selected>Available</option>
-                        <option value="Reserved">Reserved</option>
-                        <option value="Sold">Sold</option>
-                        <option value="Maintenance">Maintenance</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="vin">VIN</label>
-                    <input type="text" id="vin" name="VIN" class="form-control" value="WBAJA7C50HWA12345">
-                </div>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <h3>Vehicle Details</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="type">Vehicle Type</label>
-                    <select id="type" name="Type" class="form-control" required>
-                        <option value="">Select Type</option>
-                        <option value="Sedan" selected>Sedan</option>
-                        <option value="SUV">SUV</option>
-                        <option value="Truck">Truck</option>
-                        <option value="Coupe">Coupe</option>
-                        <option value="Convertible">Convertible</option>
-                        <option value="Hatchback">Hatchback</option>
-                        <option value="Wagon">Wagon</option>
-                        <option value="Van">Van</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="color">Color</label>
-                    <input type="text" id="color" name="Color" class="form-control" value="Mineral Gray Metallic" required>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="mileage">Mileage</label>
-                    <input type="number" id="mileage" name="Mileage" class="form-control" value="15000" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label for="transmission">Transmission</label>
-                    <select id="transmission" name="Transmission" class="form-control" required>
-                        <option value="">Select Transmission</option>
-                        <option value="Manual">Manual</option>
-                        <option value="Automatic" selected>Automatic</option>
-                        <option value="CVT">CVT</option>
-                        <option value="Semi-Automatic">Semi-Automatic</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="engine">Engine</label>
-                    <input type="text" id="engine" name="Engine" class="form-control" value="3.0L Turbo I6" placeholder="e.g., 2.0L Turbo I4">
-                </div>
-                
-                <div class="form-group">
-                    <label for="fuel-type">Fuel Type</label>
-                    <select id="fuel-type" name="FuelType" class="form-control" required>
-                        <option value="">Select Fuel Type</option>
-                        <option value="Gasoline" selected>Gasoline</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Electric">Electric</option>
-                        <option value="Hybrid">Hybrid</option>
-                        <option value="Plug-in Hybrid">Plug-in Hybrid</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="mpg-city">MPG City</label>
-                    <input type="number" id="mpg-city" name="MPGCity" class="form-control" value="22" min="0" step="0.1">
-                </div>
-                
-                <div class="form-group">
-                    <label for="mpg-highway">MPG Highway</label>
-                    <input type="number" id="mpg-highway" name="MPGHighway" class="form-control" value="30" min="0" step="0.1">
-                </div>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <h3>Features & Options</h3>
-            
+<div class="form-container">
+    @using (Html.BeginForm("EditVehicle", "Admin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="CarId" value="@Model.CarId" />
+
+        <div class="form-row">
             <div class="form-group">
-                <label for="features">Features (one per line)</label>
-                <textarea id="features" name="Features" class="form-control" rows="6">Premium Leather Seats
-Navigation System
-Heated & Ventilated Seats
-Panoramic Sunroof
-Advanced Safety Package
-Wireless Phone Charging
-Premium Sound System
-Adaptive Cruise Control</textarea>
+                <label>Brand</label>
+                <input type="text" name="Brand" class="form-control" value="@Model.Brand" required />
             </div>
-            
             <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="Description" class="form-control" rows="4">This stunning BMW 5 Series represents the perfect balance of luxury, performance, and technology. With its sophisticated design and advanced engineering, this vehicle delivers an exceptional driving experience that BMW is renowned for.</textarea>
+                <label>Model</label>
+                <input type="text" name="Model" class="form-control" value="@Model.Model" required />
             </div>
         </div>
-        
-        <div class="form-section">
-            <h3>Current Images</h3>
-            
-            <div class="current-images">
-                <div class="image-item">
-                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=60" alt="BMW 5 Series">
-                    <button type="button" class="remove-current-image" data-image-id="1">Remove</button>
-                </div>
-                <div class="image-item">
-                    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=60" alt="BMW Interior">
-                    <button type="button" class="remove-current-image" data-image-id="2">Remove</button>
-                </div>
-            </div>
-            
+
+        <div class="form-row">
             <div class="form-group">
-                <label for="new-images">Add New Images</label>
-                <input type="file" id="new-images" name="NewImages" class="form-control" multiple accept="image/*">
-                <small class="form-text">Select additional images to add to the vehicle.</small>
+                <label>Year</label>
+                <input type="text" name="Year" class="form-control" value="@Model.Year" required />
             </div>
-            
-            <div id="new-image-preview" class="image-preview-container"></div>
+            <div class="form-group">
+                <label>Price ($)</label>
+                <input type="number" name="Price" class="form-control" value="@Model.Price" step="0.01" required />
+            </div>
         </div>
-        
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Fuel Type</label>
+                <select name="FuelType" class="form-control">
+                    @foreach (var ft in new[] { "Gasoline", "Diesel", "Electric", "Hybrid" })
+                    {
+                        <option value="@ft" @(Model.FuelType == ft ? "selected" : "")>@ft</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Transmission</label>
+                <select name="Transmission" class="form-control">
+                    @foreach (var t in new[] { "Automatic", "Manual", "CVT" })
+                    {
+                        <option value="@t" @(Model.Transmission == t ? "selected" : "")>@t</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Color</label>
+                <input type="text" name="Color" class="form-control" value="@Model.Color" />
+            </div>
+            <div class="form-group">
+                <label>Mileage</label>
+                <input type="number" name="Mileage" class="form-control" value="@Model.Mileage" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Stock Quantity</label>
+                <input type="number" name="StockQuantity" class="form-control" value="@Model.StockQuantity" />
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" name="ImageUrl" class="form-control" value="@Model.ImageUrl" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+        </div>
+
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-large">Update Vehicle</button>
-            <button type="reset" class="btn btn-secondary btn-large">Reset Changes</button>
-            <a href="/Admin/Inventory" class="btn btn-outline btn-large">Cancel</a>
-            <a href="/Admin/DeleteVehicle/1" class="btn btn-danger btn-large" onclick="return confirm('Are you sure you want to delete this vehicle?')">Delete Vehicle</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/Admin/Inventory" class="btn btn-secondary">Cancel</a>
         </div>
-    </form>
+    }
 </div>
 
 <style>
-    .admin-header {
-        background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
-        color: white;
-        padding: 40px 20px;
-        text-align: center;
-        margin: -30px -30px 40px -30px;
-        border-radius: 8px 8px 0 0;
-    }
-    
-    .admin-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-    
-    .btn-primary {
-        background: #fd7e14;
-        color: white;
-    }
-    
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-    
-    .btn-outline {
-        background: transparent;
-        border: 2px solid #6c757d;
-        color: #6c757d;
-    }
-    
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .btn-large {
-        padding: 12px 24px;
-        font-size: 1.1em;
-    }
-    
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .alert {
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
-    
-    .alert-success {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-    }
-    
-    .alert-danger {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-    }
-    
-    .vehicle-form-container {
-        background: white;
-        padding: 40px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    
-    .form-section {
-        margin-bottom: 40px;
-        padding-bottom: 30px;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .form-section:last-of-type {
-        border-bottom: none;
-    }
-    
-    .form-section h3 {
-        color: #343a40;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #fd7e14;
-    }
-    
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #495057;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 16px;
-        transition: border-color 0.3s;
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: #fd7e14;
-        box-shadow: 0 0 0 2px rgba(253, 126, 20, 0.25);
-    }
-    
-    .form-text {
-        color: #6c757d;
-        font-size: 0.9em;
-        margin-top: 5px;
-    }
-    
-    .current-images {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .image-item {
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .image-item img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-    }
-    
-    .remove-current-image {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(220, 53, 69, 0.9);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 5px 10px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-    
-    .image-preview-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
-    }
-    
-    .image-preview {
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .image-preview img {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
-    }
-    
-    .image-preview .remove-image {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: rgba(220, 53, 69, 0.8);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-    
-    .form-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 40px;
-        flex-wrap: wrap;
-    }
-    
-    
-    (max-width: 768px) {
-        .vehicle-form-container {
-            padding: 20px;
-        }
-        
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-        
-        .admin-actions,
-        .form-actions {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .current-images {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
+    .admin-header { background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%); color: white; padding: 40px 20px; text-align: center; margin: -30px -30px 40px -30px; border-radius: 8px 8px 0 0; }
+    .admin-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+    .btn { display: inline-block; padding: 10px 20px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; font-weight: bold; }
+    .btn-primary { background: #fd7e14; color: white; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 900px; margin: 0 auto; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #495057; }
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+    .form-actions { display: flex; gap: 15px; margin-top: 20px; }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const newImageInput = document.getElementById('new-images');
-        const newImagePreview = document.getElementById('new-image-preview');
-        
-        // Handle new image preview
-        newImageInput.addEventListener('change', function(e) {
-            newImagePreview.innerHTML = '';
-            
-            Array.from(e.target.files).forEach((file, index) => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'image-preview';
-                        previewDiv.innerHTML = `
-                            <img src="${e.target.result}" alt="New Preview ${index + 1}">
-                            <button type="button" class="remove-image" onclick="removeNewImage(this, ${index})">×</button>
-                        `;
-                        newImagePreview.appendChild(previewDiv);
-                    };
-                    
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-        
-        // Handle current image removal
-        document.querySelectorAll('.remove-current-image').forEach(button => {
-            button.addEventListener('click', function() {
-                if (confirm('Are you sure you want to remove this image?')) {
-                    this.parentElement.style.opacity = '0.5';
-                    this.textContent = 'Removed';
-                    this.disabled = true;
-                    // In a real application, you would mark this image for deletion
-                }
-            });
-        });
-        
-        // Form validation
-        const form = document.getElementById('edit-vehicle-form');
-        form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.style.borderColor = '#dc3545';
-                    isValid = false;
-                } else {
-                    field.style.borderColor = '#ced4da';
-                }
-            });
-            
-            if (!isValid) {
-                e.preventDefault();
-                alert('Please fill in all required fields.');
-            }
-        });
-    });
-    
-    function removeNewImage(button, index) {
-        button.parentElement.remove();
-        // In a real application, you would also remove the file from the input
-    }
-</script>

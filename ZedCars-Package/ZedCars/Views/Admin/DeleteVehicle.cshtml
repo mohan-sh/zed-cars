@@ -1,3 +1,4 @@
+@model ZedCars.Models.Car
 @{
     ViewBag.Title = "Delete Vehicle";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
@@ -6,450 +7,54 @@
 <div class="admin-header">
     <h1>Delete Vehicle</h1>
     <p class="lead">Confirm vehicle deletion</p>
-    
     <div class="admin-actions">
-        <a href="/Admin/Dashboard" class="btn btn-secondary">Back to Dashboard</a>
-        <a href="/Admin/Inventory" class="btn btn-secondary">View Inventory</a>
+        <a href="/Admin/Inventory" class="btn btn-secondary">Cancel</a>
     </div>
 </div>
 
 <div class="delete-container">
     <div class="warning-section">
-        <div class="warning-icon">⚠️</div>
+        <div class="warning-icon">&#9888;</div>
         <div class="warning-content">
-            <h2>Warning: This action cannot be undone!</h2>
-            <p>You are about to permanently delete this vehicle from the inventory. This will remove all associated data including images, specifications, and history.</p>
+            <h2>Are you sure you want to delete this vehicle?</h2>
+            <p>This will mark the vehicle as inactive and remove it from the inventory.</p>
         </div>
     </div>
-    
+
     <div class="vehicle-details">
-        <h3>Vehicle to be deleted:</h3>
-        
-        <div class="vehicle-summary">
-            <div class="vehicle-image">
-                <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=60" alt="BMW 5 Series" />
-            </div>
-            
-            <div class="vehicle-info">
-                <h4>2023 BMW 5 Series</h4>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Price:</span>
-                        <span class="info-value">$55,000</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">VIN:</span>
-                        <span class="info-value">WBAJA7C50HWA12345</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value status-available">Available</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Mileage:</span>
-                        <span class="info-value">15,000 miles</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Color:</span>
-                        <span class="info-value">Mineral Gray Metallic</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Transmission:</span>
-                        <span class="info-value">Automatic</span>
-                    </div>
-                </div>
-            </div>
+        <table class="info-table">
+            <tr><th>Brand</th><td>@Model.Brand</td></tr>
+            <tr><th>Model</th><td>@Model.Model</td></tr>
+            <tr><th>Year</th><td>@Model.Year</td></tr>
+            <tr><th>Price</th><td>$@string.Format("{0:N0}", Model.Price)</td></tr>
+        </table>
+    </div>
+
+    @using (Html.BeginForm("DeleteVehicle", "Admin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.CarId" />
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="/Admin/Inventory" class="btn btn-secondary">Cancel</a>
         </div>
-    </div>
-    
-    <div class="impact-section">
-        <h3>Deletion Impact:</h3>
-        <div class="impact-list">
-            <div class="impact-item">
-                <div class="impact-icon">&#128465;️</div>
-                <div class="impact-text">
-                    <strong>Vehicle Record:</strong> Complete vehicle information will be permanently removed
-                </div>
-            </div>
-            <div class="impact-item">
-                <div class="impact-icon">&#128248;</div>
-                <div class="impact-text">
-                    <strong>Images:</strong> All associated vehicle images will be deleted
-                </div>
-            </div>
-            <div class="impact-item">
-                <div class="impact-icon">&#128202;</div>
-                <div class="impact-text">
-                    <strong>Analytics:</strong> Vehicle will be removed from sales reports and statistics
-                </div>
-            </div>
-            <div class="impact-item">
-                <div class="impact-icon">&#128279;</div>
-                <div class="impact-text">
-                    <strong>Links:</strong> Any bookmarks or saved links to this vehicle will become invalid
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="confirmation-section">
-        <h3>Confirm Deletion</h3>
-        <p>To proceed with deletion, please type <strong>"DELETE"</strong> in the box below:</p>
-        
-        <form action="/Admin/DeleteVehicle" method="post" id="delete-form">
-            <input type="hidden" name="VehicleId" value="1" />
-            
-            <div class="form-group">
-                <input type="text" id="confirmation-text" name="ConfirmationText" class="form-control" placeholder="Type DELETE to confirm" required />
-            </div>
-            
-            <div class="form-group">
-                <label for="deletion-reason">Reason for deletion (optional):</label>
-                <select id="deletion-reason" name="DeletionReason" class="form-control">
-                    <option value="">Select a reason</option>
-                    <option value="Sold">Vehicle was sold</option>
-                    <option value="Damaged">Vehicle was damaged</option>
-                    <option value="Recalled">Vehicle was recalled</option>
-                    <option value="Duplicate">Duplicate entry</option>
-                    <option value="Error">Added by mistake</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="additional-notes">Additional notes (optional):</label>
-                <textarea id="additional-notes" name="AdditionalNotes" class="form-control" rows="3" placeholder="Any additional information about this deletion..."></textarea>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-danger btn-large" id="delete-button" disabled>
-                    &#128465;️ Delete Vehicle Permanently
-                </button>
-                <a href="/Admin/EditVehicle/1" class="btn btn-secondary btn-large">Edit Instead</a>
-                <a href="/Admin/Inventory" class="btn btn-outline btn-large">Cancel</a>
-            </div>
-        </form>
-    </div>
+    }
 </div>
 
 <style>
-    .admin-header {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        color: white;
-        padding: 40px 20px;
-        text-align: center;
-        margin: -30px -30px 40px -30px;
-        border-radius: 8px 8px 0 0;
-    }
-    
-    .admin-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-    
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-    
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .btn-outline {
-        background: transparent;
-        border: 2px solid #6c757d;
-        color: #6c757d;
-    }
-    
-    .btn-large {
-        padding: 12px 24px;
-        font-size: 1.1em;
-    }
-    
-    .btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    .delete-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .warning-section {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-    
-    .warning-icon {
-        font-size: 3em;
-        flex-shrink: 0;
-    }
-    
-    .warning-content h2 {
-        color: #856404;
-        margin: 0 0 10px 0;
-    }
-    
-    .warning-content p {
-        color: #856404;
-        margin: 0;
-        line-height: 1.5;
-    }
-    
-    .vehicle-details {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        margin-bottom: 30px;
-    }
-    
-    .vehicle-details h3 {
-        color: #343a40;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #dc3545;
-        padding-bottom: 10px;
-    }
-    
-    .vehicle-summary {
-        display: flex;
-        gap: 30px;
-        align-items: flex-start;
-    }
-    
-    .vehicle-image {
-        flex-shrink: 0;
-    }
-    
-    .vehicle-image img {
-        width: 250px;
-        height: 180px;
-        object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .vehicle-info {
-        flex: 1;
-    }
-    
-    .vehicle-info h4 {
-        color: #343a40;
-        margin: 0 0 20px 0;
-        font-size: 1.5em;
-    }
-    
-    .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
-    
-    .info-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .info-label {
-        font-weight: bold;
-        color: #495057;
-    }
-    
-    .info-value {
-        color: #6c757d;
-    }
-    
-    .status-available {
-        color: #28a745;
-        font-weight: bold;
-    }
-    
-    .impact-section {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        margin-bottom: 30px;
-    }
-    
-    .impact-section h3 {
-        color: #343a40;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #dc3545;
-        padding-bottom: 10px;
-    }
-    
-    .impact-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .impact-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border-left: 4px solid #dc3545;
-    }
-    
-    .impact-icon {
-        font-size: 1.5em;
-        flex-shrink: 0;
-    }
-    
-    .impact-text {
-        color: #495057;
-        line-height: 1.4;
-    }
-    
-    .confirmation-section {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-    }
-    
-    .confirmation-section h3 {
-        color: #343a40;
-        margin-bottom: 15px;
-        border-bottom: 2px solid #dc3545;
-        padding-bottom: 10px;
-    }
-    
-    .confirmation-section > p {
-        color: #495057;
-        margin-bottom: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #495057;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 16px;
-        transition: border-color 0.3s;
-    }
-    
-    .form-control:focus {
-        outline: none;
-        border-color: #dc3545;
-        box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
-    }
-    
-    .form-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 30px;
-        flex-wrap: wrap;
-    }
-    
-    @@media (max-width: 768px) {
-        .delete-container {
-            padding: 10px;
-        }
-        
-        .warning-section {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .vehicle-summary {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .info-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .form-actions {
-            flex-direction: column;
-            align-items: center;
-        }
-    }
+    .admin-header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 40px 20px; text-align: center; margin: -30px -30px 40px -30px; border-radius: 8px 8px 0 0; }
+    .admin-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+    .btn { display: inline-block; padding: 10px 20px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; font-weight: bold; }
+    .btn-danger { background: #dc3545; color: white; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .delete-container { max-width: 600px; margin: 0 auto; }
+    .warning-section { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center; }
+    .warning-icon { font-size: 2.5em; }
+    .warning-content h2 { color: #856404; margin: 0 0 5px 0; font-size: 1.1em; }
+    .warning-content p { color: #856404; margin: 0; }
+    .vehicle-details { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table th, .info-table td { padding: 10px; border-bottom: 1px solid #dee2e6; text-align: left; }
+    .info-table th { color: #495057; width: 120px; }
+    .form-actions { display: flex; gap: 15px; }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const confirmationInput = document.getElementById('confirmation-text');
-        const deleteButton = document.getElementById('delete-button');
-        const deleteForm = document.getElementById('delete-form');
-        
-        // Enable delete button only when "DELETE" is typed
-        confirmationInput.addEventListener('input', function() {
-            if (this.value.toUpperCase() === 'DELETE') {
-                deleteButton.disabled = false;
-                deleteButton.style.opacity = '1';
-            } else {
-                deleteButton.disabled = true;
-                deleteButton.style.opacity = '0.5';
-            }
-        });
-        
-        // Final confirmation before submission
-        deleteForm.addEventListener('submit', function(e) {
-            if (confirmationInput.value.toUpperCase() !== 'DELETE') {
-                e.preventDefault();
-                alert('Please type "DELETE" to confirm deletion.');
-                return;
-            }
-            
-            const finalConfirm = confirm(
-                'FINAL WARNING: This will permanently delete the vehicle and all associated data. ' +
-                'This action cannot be undone. Are you absolutely sure you want to proceed?'
-            );
-            
-            if (!finalConfirm) {
-                e.preventDefault();
-            }
-        });
-    });
-</script>

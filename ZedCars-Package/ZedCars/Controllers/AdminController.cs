@@ -48,8 +48,29 @@ namespace ZedCars.Controllers
         // GET: /Admin/Inventory
         public ActionResult Inventory()
         {
-            ViewBag.Vehicles = Vehicles;
-            return View();
+            var cars = new List<ZedCars.Models.Car>();
+            try
+            {
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT CarId, Brand, Model, Year, Price, FuelType, Transmission, ImageUrl, StockQuantity FROM Cars WHERE IsActive=TRUE ORDER BY CarId DESC"))
+                {
+                    while (reader.Read())
+                        cars.Add(new ZedCars.Models.Car
+                        {
+                            CarId        = reader.GetInt32("CarId"),
+                            Brand        = reader["Brand"].ToString(),
+                            Model        = reader["Model"].ToString(),
+                            Year         = reader["Year"].ToString(),
+                            Price        = reader.GetDecimal("Price"),
+                            FuelType     = reader["FuelType"].ToString(),
+                            Transmission = reader["Transmission"].ToString(),
+                            ImageUrl     = reader["ImageUrl"].ToString(),
+                            StockQuantity= reader.GetInt32("StockQuantity")
+                        });
+                }
+            }
+            catch { }
+            return View(cars);
         }
 
         // GET: /Admin/AddVehicle
@@ -84,27 +105,56 @@ namespace ZedCars.Controllers
         // GET: /Admin/EditVehicle/5
         public ActionResult EditVehicle(int id)
         {
-            var vehicle = Vehicles.Find(v => v.Id == id);
-            if (vehicle == null)
+            ZedCars.Models.Car car = null;
+            try
             {
-                return HttpNotFound();
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT CarId, Brand, Model, Year, Price, FuelType, Transmission, Description, ImageUrl, Color, Mileage, StockQuantity FROM Cars WHERE CarId=" + id + " AND IsActive=TRUE"))
+                {
+                    if (reader.Read())
+                        car = new ZedCars.Models.Car
+                        {
+                            CarId        = reader.GetInt32("CarId"),
+                            Brand        = reader["Brand"].ToString(),
+                            Model        = reader["Model"].ToString(),
+                            Year         = reader["Year"].ToString(),
+                            Price        = reader.GetDecimal("Price"),
+                            FuelType     = reader["FuelType"].ToString(),
+                            Transmission = reader["Transmission"].ToString(),
+                            Description  = reader["Description"].ToString(),
+                            ImageUrl     = reader["ImageUrl"].ToString(),
+                            Color        = reader["Color"].ToString(),
+                            Mileage      = reader["Mileage"] == DBNull.Value ? (int?)null : reader.GetInt32("Mileage"),
+                            StockQuantity= reader.GetInt32("StockQuantity")
+                        };
+                }
             }
-            
-            return View(vehicle);
+            catch { }
+            if (car == null) return HttpNotFound();
+            return View(car);
         }
 
         // POST: /Admin/EditVehicle/5
         [HttpPost]
-        public ActionResult EditVehicle(Vehicle vehicle)
+        public ActionResult EditVehicle(ZedCars.Models.Car car)
         {
-            // In a real application, you would update the vehicle in a database
-            var index = Vehicles.FindIndex(v => v.Id == vehicle.Id);
-            if (index >= 0)
+            try
             {
-                Vehicles[index] = vehicle;
+                string sql = string.Format(
+                    "UPDATE Cars SET Brand='{0}', Model='{1}', Year='{2}', Price={3}, FuelType='{4}', Transmission='{5}', Description='{6}', ImageUrl='{7}', Color='{8}', Mileage={9}, StockQuantity={10} WHERE CarId={11}",
+                    car.Brand, car.Model, car.Year, car.Price, car.FuelType, car.Transmission,
+                    (car.Description ?? "").Replace("'", "''"),
+                    (car.ImageUrl ?? "").Replace("'", "''"),
+                    (car.Color ?? "").Replace("'", "''"),
+                    car.Mileage.HasValue ? car.Mileage.Value.ToString() : "0",
+                    car.StockQuantity, car.CarId);
+                DatabaseConnection.ExecuteNonQuery(sql);
                 TempData["SuccessMessage"] = "Vehicle updated successfully!";
             }
-            
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to update vehicle: " + ex.Message;
+            }
             return RedirectToAction("Inventory");
         }
 
@@ -112,23 +162,41 @@ namespace ZedCars.Controllers
         public ActionResult DeleteVehicle(int? id)
         {
             if (!id.HasValue) return RedirectToAction("Inventory");
-            var vehicle = Vehicles.Find(v => v.Id == id.Value);
-            if (vehicle == null) return HttpNotFound();
-            return View(vehicle);
+            ZedCars.Models.Car car = null;
+            try
+            {
+                using (var reader = DatabaseConnection.ExecuteReader(
+                    "SELECT CarId, Brand, Model, Year, Price FROM Cars WHERE CarId=" + id.Value + " AND IsActive=TRUE"))
+                {
+                    if (reader.Read())
+                        car = new ZedCars.Models.Car
+                        {
+                            CarId = reader.GetInt32("CarId"),
+                            Brand = reader["Brand"].ToString(),
+                            Model = reader["Model"].ToString(),
+                            Year  = reader["Year"].ToString(),
+                            Price = reader.GetDecimal("Price")
+                        };
+                }
+            }
+            catch { }
+            if (car == null) return HttpNotFound();
+            return View(car);
         }
 
         // POST: /Admin/DeleteVehicle/5
         [HttpPost, ActionName("DeleteVehicle")]
         public ActionResult DeleteVehicleConfirmed(int id)
         {
-            // In a real application, you would delete the vehicle from a database
-            var vehicle = Vehicles.Find(v => v.Id == id);
-            if (vehicle != null)
+            try
             {
-                Vehicles.Remove(vehicle);
-                TempData["SuccessMessage"] = "Vehicle deleted successfully!";
+                int rows = DatabaseConnection.ExecuteNonQuery("DELETE FROM Cars WHERE CarId=" + id);
+                TempData["SuccessMessage"] = rows > 0 ? "Vehicle deleted successfully!" : "No vehicle found with that ID.";
             }
-            
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to delete vehicle: " + ex.Message;
+            }
             return RedirectToAction("Inventory");
         }
         

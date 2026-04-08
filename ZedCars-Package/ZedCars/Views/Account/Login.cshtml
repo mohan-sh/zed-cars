@@ -1,12 +1,12 @@
 @{
-    ViewBag.Title = "Login";
+    ViewBag.Title = "User Sign In";
     Layout = "~/Views/Shared/_SimpleLayout.cshtml";
 }
 
 <div class="login-container">
     <div class="login-form">
-        <h1>Sign In</h1>
-        <p class="subtitle">Access your ZedCars account</p>
+        <h1>User Sign In</h1>
+        <p class="subtitle">Access your ZedCars customer account</p>
         
         @if (TempData["ErrorMessage"] != null)
         {
@@ -49,28 +49,23 @@
                         <tr>
                             <th>Username</th>
                             <th>Password</th>
-                            <th>Role</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>admin</td>
-                            <td>admin123</td>
-                            <td>Administrator</td>
-                        </tr>
-                        <tr>
                             <td>user1</td>
                             <td>password1</td>
-                            <td>Customer</td>
                         </tr>
                         <tr>
                             <td>user2</td>
                             <td>password2</td>
-                            <td>Customer</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <p>Are you an admin? <a href="/Account/AdminLogin">Admin Login</a></p>
         </div>
     </div>
     
