@@ -19,34 +19,66 @@
             align-items: center;
             justify-content: center;
         }
-        .brand { color: white; text-align: center; margin-bottom: 40px; }
-        .brand h1 { font-size: 2.5em; }
-        .brand p { opacity: 0.8; margin-top: 8px; }
-        .cards {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .brand { color: white; text-align: center; margin-bottom: 30px; }
+        .brand h1 { font-size: 2em; }
+        .brand p { opacity: 0.8; margin-top: 6px; font-size: 0.95em; }
+
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 40px 30px;
-            text-align: center;
-            width: 220px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            text-decoration: none;
-            color: #333;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: block;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 380px;
+            overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
-        .card .icon { font-size: 2.5em; margin-bottom: 15px; }
-        .card h2 { font-size: 1.1em; margin-bottom: 8px; }
-        .card p { font-size: 0.85em; color: #666; }
-        .card.admin { border-top: 4px solid #dc3545; }
-        .card.user  { border-top: 4px solid #007bff; }
-        .card.reg   { border-top: 4px solid #28a745; }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab:hover { background: #e9ecef; }
+        .tab.active { background: white; color: #4b6cb7; border-bottom-color: #4b6cb7; }
+        .tab.admin.active { color: #dc3545; border-bottom-color: #dc3545; }
+
+        .pane { display: none; padding: 30px; }
+        .pane.active { display: block; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: #495057; }
+        .form-group input {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #ced4da; border-radius: 6px;
+            font-size: 0.95em; transition: border-color 0.2s;
+        }
+        .form-group input:focus { outline: none; border-color: #4b6cb7; box-shadow: 0 0 0 2px rgba(75,108,183,0.2); }
+
+        .btn {
+            width: 100%; padding: 11px;
+            border: none; border-radius: 6px;
+            font-size: 1em; font-weight: bold;
+            cursor: pointer; color: white; transition: background 0.2s;
+        }
+        .btn-user  { background: #4b6cb7; }
+        .btn-user:hover  { background: #3a5a9b; }
+        .btn-admin { background: #dc3545; }
+        .btn-admin:hover { background: #b02a37; }
+        .btn-reg   { background: #28a745; }
+        .btn-reg:hover   { background: #1e7e34; }
+
+        .alert { padding: 10px 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
@@ -54,22 +86,81 @@
         <h1>&#9654; ZedCars</h1>
         <p>Your trusted partner for quality vehicles</p>
     </div>
-    <div class="cards">
-        <a href="/Account/Register" class="card reg">
-            <div class="icon">&#128221;</div>
-            <h2>Register</h2>
-            <p>Create a new customer account</p>
-        </a>
-        <a href="/Account/Login" class="card user">
-            <div class="icon">&#128100;</div>
-            <h2>User Login</h2>
-            <p>Sign in to your customer account</p>
-        </a>
-        <a href="/Account/AdminLogin" class="card admin">
-            <div class="icon">&#128274;</div>
-            <h2>Admin Login</h2>
-            <p>Access the admin dashboard</p>
-        </a>
+
+    <div class="card">
+        <div class="tabs">
+            <div class="tab active"       onclick="showTab('register')">&#128221; Register</div>
+            <div class="tab"              onclick="showTab('user')">&#128100; User Login</div>
+            <div class="tab admin"        onclick="showTab('admin')">&#128274; Admin Login</div>
+        </div>
+
+        <!-- Register -->
+        <div class="pane active" id="pane-register">
+            @if (TempData["RegError"] != null)   { <div class="alert alert-danger">@TempData["RegError"]</div> }
+            @if (TempData["RegSuccess"] != null) { <div class="alert alert-success">@TempData["RegSuccess"]</div> }
+            <form method="post" action="/Account/Register">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="fullName" required />
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required />
+                </div>
+                <button type="submit" class="btn btn-reg">Register</button>
+            </form>
+        </div>
+
+        <!-- User Login -->
+        <div class="pane" id="pane-user">
+            @if (TempData["UserError"] != null) { <div class="alert alert-danger">@TempData["UserError"]</div> }
+            <form method="post" action="/Account/Login">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required />
+                </div>
+                <button type="submit" class="btn btn-user">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Admin Login -->
+        <div class="pane" id="pane-admin">
+            @if (TempData["AdminError"] != null) { <div class="alert alert-danger">@TempData["AdminError"]</div> }
+            <form method="post" action="/Account/AdminLogin">
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" name="username" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required />
+                </div>
+                <button type="submit" class="btn btn-admin">Admin Sign In</button>
+            </form>
+        </div>
     </div>
+
+    <script>
+        function showTab(name) {
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', ['register','user','admin'][i] === name);
+            });
+            document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('pane-' + name).classList.add('active');
+        }
+
+        // Auto-open correct tab if there's an error
+        @if (TempData["ActiveTab"] != null) {
+            <text>showTab('@TempData["ActiveTab"]');</text>
+        }
+    </script>
 </body>
 </html>

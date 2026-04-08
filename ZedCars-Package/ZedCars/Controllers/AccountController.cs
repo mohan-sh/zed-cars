@@ -121,7 +121,7 @@ namespace ZedCars.Controllers
         // GET: /Account/Login  (User login)
         public ActionResult Login()
         {
-            return View();
+            return RedirectToAction("Landing");
         }
 
         // POST: /Account/Login
@@ -130,8 +130,9 @@ namespace ZedCars.Controllers
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                TempData["ErrorMessage"] = "Username and password are required.";
-                return View();
+                TempData["UserError"] = "Username and password are required.";
+                TempData["ActiveTab"] = "user";
+                return RedirectToAction("Landing");
             }
 
             var user = GetUserFromDb(username, password);
@@ -139,8 +140,9 @@ namespace ZedCars.Controllers
             {
                 if (user.Role == "Admin")
                 {
-                    TempData["ErrorMessage"] = "Admins must use the Admin Login page.";
-                    return View();
+                    TempData["UserError"] = "Admins must use the Admin Login tab.";
+                    TempData["ActiveTab"] = "user";
+                    return RedirectToAction("Landing");
                 }
 
                 var ticket = new FormsAuthenticationTicket(
@@ -154,14 +156,15 @@ namespace ZedCars.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            TempData["ErrorMessage"] = "Invalid username or password.";
-            return View();
+            TempData["UserError"] = "Invalid username or password.";
+            TempData["ActiveTab"] = "user";
+            return RedirectToAction("Landing");
         }
 
         // GET: /Account/AdminLogin
         public ActionResult AdminLogin()
         {
-            return View();
+            return RedirectToAction("Landing");
         }
 
         // POST: /Account/AdminLogin
@@ -170,8 +173,9 @@ namespace ZedCars.Controllers
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                TempData["ErrorMessage"] = "Username and password are required.";
-                return View();
+                TempData["AdminError"] = "Username and password are required.";
+                TempData["ActiveTab"] = "admin";
+                return RedirectToAction("Landing");
             }
 
             var user = GetUserFromDb(username, password);
@@ -188,8 +192,9 @@ namespace ZedCars.Controllers
                 return RedirectToAction("Dashboard", "Admin");
             }
 
-            TempData["ErrorMessage"] = "Invalid admin credentials.";
-            return View();
+            TempData["AdminError"] = "Invalid admin credentials.";
+            TempData["ActiveTab"] = "admin";
+            return RedirectToAction("Landing");
         }
 
         // GET: /Account/Logout
@@ -225,15 +230,16 @@ namespace ZedCars.Controllers
                         cmd.ExecuteNonQuery();
                     }
                 }
-                TempData["SuccessMessage"] = "Registration successful! Please sign in.";
+                TempData["RegSuccess"] = "Registration successful! Please sign in.";
+                TempData["ActiveTab"] = "user";
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Register error: " + ex.Message);
-                TempData["ErrorMessage"] = "Registration failed. Username may already exist.";
-                return View();
+                TempData["RegError"] = "Registration failed. Username may already exist.";
+                TempData["ActiveTab"] = "register";
             }
-            return RedirectToAction("Login");
+            return RedirectToAction("Landing");
         }
 
         // GET: /Account/UserProfile
