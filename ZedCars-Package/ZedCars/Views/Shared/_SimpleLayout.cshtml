@@ -167,7 +167,7 @@
     </script>
 </head>
 <body>
-    @if (Request.IsAuthenticated)
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
     <div class="header">
         <div class="top-bar">
@@ -177,10 +177,10 @@
         <div class="logo">&#9654; ZedCars</div>
         <p>Your trusted partner for quality vehicles</p>
         <div class="nav-tabs">
-            <a href="/Home/Index" class="nav-tab @(Request.Path.Contains("/Home/Index") ? "active" : "")">Home</a>
-            <a href="/Home/Inventory" class="nav-tab @(Request.Path.Contains("/Inventory") ? "active" : "")">Inventory</a>
-            <a href="/Home/About" class="nav-tab @(Request.Path.Contains("/About") ? "active" : "")">About</a>
-            <a href="/Home/Contact" class="nav-tab @(Request.Path.Contains("/Contact") ? "active" : "")">Contact</a>
+            <a href="/Home/Index" class="nav-tab @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Home/Index") ? "active" : "")">Home</a>
+            <a href="/Home/Inventory" class="nav-tab @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Inventory") ? "active" : "")">Inventory</a>
+            <a href="/Home/About" class="nav-tab @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/About") ? "active" : "")">About</a>
+            <a href="/Home/Contact" class="nav-tab @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Contact") ? "active" : "")">Contact</a>
             <p class="username"> @User.Identity.Name </p>
         </div>
     </div>

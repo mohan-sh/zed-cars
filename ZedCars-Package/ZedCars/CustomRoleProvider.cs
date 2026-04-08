@@ -1,77 +1,15 @@
-using System;
-using System.Web.Security;
-using ZedCars.Database;
-using MySql.Data.MySqlClient;
-
+﻿// CustomRoleProvider.cs
+// This file previously contained an ASP.NET Membership RoleProvider implementation
+// that relied on System.Web.Security.RoleProvider.
+//
+// Role management has been fully migrated to ASP.NET Core Claims-based authentication.
+// Roles ("Admin", "Customer", etc.) are now embedded as ClaimTypes.Role claims when
+// the user signs in via AccountController (Login / AdminLogin actions) and are
+// evaluated automatically by the [Authorize(Roles = "...")] attribute through the
+// cookie authentication middleware configured in Program.cs.
+//
+// No replacement implementation is required here.
 namespace ZedCars
 {
-    public class CustomRoleProvider : RoleProvider
-    {
-        public override string ApplicationName { get; set; }
-
-        public override string[] GetRolesForUser(string username)
-        {
-            // Check Admins table first
-            try
-            {
-                using (var connection = DatabaseConnection.GetConnection())
-                {
-                    connection.Open();
-                    using (var cmd = new MySqlCommand(
-                        "SELECT AdminId FROM Admins WHERE Username=@u AND IsActive=TRUE",
-                        connection))
-                    {
-                        cmd.Parameters.AddWithValue("@u", username);
-                        var result = cmd.ExecuteScalar();
-                        if (result != null)
-                            return new[] { "Admin" };
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("GetRolesForUser (Admins) error: " + ex.Message);
-            }
-
-            // Fall back to Users table
-            try
-            {
-                using (var connection = DatabaseConnection.GetConnection())
-                {
-                    connection.Open();
-                    using (var cmd = new MySqlCommand(
-                        "SELECT Role FROM Users WHERE Username=@u AND IsActive=TRUE",
-                        connection))
-                    {
-                        cmd.Parameters.AddWithValue("@u", username);
-                        var role = cmd.ExecuteScalar()?.ToString();
-                        if (!string.IsNullOrEmpty(role))
-                            return new[] { role };
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("GetRolesForUser error: " + ex.Message);
-            }
-            return new string[0];
-        }
-
-        public override bool IsUserInRole(string username, string roleName)
-        {
-            var roles = GetRolesForUser(username);
-            return Array.IndexOf(roles, roleName) >= 0;
-        }
-
-        #region Not Implemented
-        public override void AddUsersToRoles(string[] u, string[] r)    { throw new NotImplementedException(); }
-        public override void CreateRole(string roleName)                 { throw new NotImplementedException(); }
-        public override bool DeleteRole(string r, bool throwOnPopulated) { throw new NotImplementedException(); }
-        public override string[] FindUsersInRole(string r, string u)     { throw new NotImplementedException(); }
-        public override string[] GetAllRoles()                           { throw new NotImplementedException(); }
-        public override string[] GetUsersInRole(string roleName)         { throw new NotImplementedException(); }
-        public override void RemoveUsersFromRoles(string[] u, string[] r){ throw new NotImplementedException(); }
-        public override bool RoleExists(string roleName)                 { throw new NotImplementedException(); }
-        #endregion
-    }
+    // Intentionally empty — role management is performed via claims in AccountController.
 }

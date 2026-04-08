@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using ZedCars.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZedCars.Database;
+using ZedCars.Models;
 
 namespace ZedCars.Controllers
 {
@@ -20,14 +19,14 @@ namespace ZedCars.Controllers
                         cars.Add(new Car
                         {
                             CarId         = reader.GetInt32("CarId"),
-                            Brand         = reader["Brand"].ToString(),
-                            Model         = reader["Model"].ToString(),
-                            Year          = reader["Year"].ToString(),
+                            Brand         = reader["Brand"].ToString() ?? string.Empty,
+                            Model         = reader["Model"].ToString() ?? string.Empty,
+                            Year          = reader["Year"].ToString() ?? string.Empty,
                             Price         = reader.GetDecimal("Price"),
-                            FuelType      = reader["FuelType"].ToString(),
-                            Transmission  = reader["Transmission"].ToString(),
-                            Description   = reader["Description"].ToString(),
-                            ImageUrl      = reader["ImageUrl"].ToString(),
+                            FuelType      = reader["FuelType"].ToString() ?? string.Empty,
+                            Transmission  = reader["Transmission"].ToString() ?? string.Empty,
+                            Description   = reader["Description"].ToString() ?? string.Empty,
+                            ImageUrl      = reader["ImageUrl"].ToString() ?? string.Empty,
                             StockQuantity = reader.GetInt32("StockQuantity")
                         });
                     }
@@ -36,8 +35,9 @@ namespace ZedCars.Controllers
             catch { }
             return cars;
         }
+
         [Authorize]
-        public ActionResult Index()
+        public IActionResult Index()
         {
             ViewBag.Message = "Welcome to ZedCars!";
             ViewBag.CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -46,13 +46,13 @@ namespace ZedCars.Controllers
             return View(all.GetRange(0, Math.Min(3, all.Count)));
         }
 
-        public ActionResult About()
+        public IActionResult About()
         {
             ViewBag.Message = "About ZedCars";
             return View();
         }
 
-        public ActionResult Contact()
+        public IActionResult Contact()
         {
             ViewBag.Message = "Contact Us";
             return View();
@@ -60,7 +60,7 @@ namespace ZedCars.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Contact(Models.ContactMessage model)
+        public IActionResult Contact(ContactMessage model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -69,8 +69,8 @@ namespace ZedCars.Controllers
                 "INSERT INTO ContactMessages (Name, Email, Phone, Subject, Message) VALUES ('{0}','{1}','{2}','{3}','{4}')",
                 model.Name.Replace("'", "''"),
                 model.Email.Replace("'", "''"),
-                (model.Phone ?? "").Replace("'", "''"),
-                (model.Subject ?? "").Replace("'", "''"),
+                (model.Phone ?? string.Empty).Replace("'", "''"),
+                (model.Subject ?? string.Empty).Replace("'", "''"),
                 model.Message.Replace("'", "''")
             );
             Database.DatabaseConnection.ExecuteNonQuery(query);
@@ -78,17 +78,17 @@ namespace ZedCars.Controllers
             ViewBag.Success = "Your message has been sent!";
             return View();
         }
-        
-        public ActionResult Inventory()
+
+        public IActionResult Inventory()
         {
             ViewBag.Message = "Vehicle Inventory";
             return View(GetCarsFromDb());
         }
-        
-        public ActionResult VehicleDetail(int id = 0)
+
+        public IActionResult VehicleDetail(int id = 0)
         {
             ViewBag.Message = "Vehicle Details";
-            Car car = null;
+            Car? car = null;
             try
             {
                 using (var reader = DatabaseConnection.ExecuteReader(
@@ -99,46 +99,46 @@ namespace ZedCars.Controllers
                         car = new Car
                         {
                             CarId         = reader.GetInt32("CarId"),
-                            Brand         = reader["Brand"].ToString(),
-                            Model         = reader["Model"].ToString(),
-                            Year          = reader["Year"].ToString(),
+                            Brand         = reader["Brand"].ToString() ?? string.Empty,
+                            Model         = reader["Model"].ToString() ?? string.Empty,
+                            Year          = reader["Year"].ToString() ?? string.Empty,
                             Price         = reader.GetDecimal("Price"),
-                            FuelType      = reader["FuelType"].ToString(),
-                            Transmission  = reader["Transmission"].ToString(),
-                            Description   = reader["Description"].ToString(),
-                            ImageUrl      = reader["ImageUrl"].ToString(),
+                            FuelType      = reader["FuelType"].ToString() ?? string.Empty,
+                            Transmission  = reader["Transmission"].ToString() ?? string.Empty,
+                            Description   = reader["Description"].ToString() ?? string.Empty,
+                            ImageUrl      = reader["ImageUrl"].ToString() ?? string.Empty,
                             StockQuantity = reader.GetInt32("StockQuantity")
                         };
                     }
                 }
             }
             catch { }
-            if (car == null) return HttpNotFound();
+            if (car == null) return NotFound();
             return View(car);
         }
-        
-        public ActionResult Direct()
+
+        public IActionResult Direct()
         {
             ViewBag.Message = "Direct View Test";
             ViewBag.CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View();
         }
-        
+
         // Simple test action that returns plain text
         public ContentResult Test()
         {
             return Content("Home controller is working! Time: " + DateTime.Now);
         }
-        
+
         // Simple test action that returns JSON
         public JsonResult Status()
         {
-            return Json(new 
-            { 
-                Status = "OK", 
-                Controller = "Home", 
-                Time = DateTime.Now.ToString() 
-            }, JsonRequestBehavior.AllowGet);
+            return Json(new
+            {
+                Status     = "OK",
+                Controller = "Home",
+                Time       = DateTime.Now.ToString()
+            });
         }
     }
 }
