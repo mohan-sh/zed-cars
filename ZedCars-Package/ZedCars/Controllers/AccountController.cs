@@ -221,12 +221,13 @@ namespace ZedCars.Controllers
                 {
                     connection.Open();
                     using (var cmd = new MySqlCommand(
-                        "INSERT INTO Users (Username, Password, FullName, Role, IsActive) VALUES (@u, @p, @f, 'Customer', TRUE)",
+                        "INSERT INTO Users (Username, Password, FullName, Email, Role, IsActive) VALUES (@u, @p, @f, @e, 'Customer', TRUE)",
                         connection))
                     {
                         cmd.Parameters.AddWithValue("@u", username);
                         cmd.Parameters.AddWithValue("@p", password);
                         cmd.Parameters.AddWithValue("@f", fullName);
+                        cmd.Parameters.AddWithValue("@e", email);
                         cmd.ExecuteNonQuery();
                     }
                 }
