@@ -22,7 +22,7 @@ git push -uf origin master
 
 ## Integrate with your tools
 
-* [Set up project integrations](https://gitlab.cloudthat.com/internal-projects-2025/awsmodernizationdotnet/-/settings/integrations)
+* [Set up project integrations](https://github.com/mohan-sh/zed-cars.git/-/settings/integrations)
 
 ## Collaborate with your team
 
