@@ -55,7 +55,7 @@
                 <select name="FuelType" class="form-control">
                     @foreach (var ft in new[] { "Gasoline", "Diesel", "Electric", "Hybrid" })
                     {
-                        <option value="@ft" @(Model.FuelType == ft ? "selected" : "")>@ft</option>
+                        <option value="@ft" selected="@(Model.FuelType == ft ? "selected" : null)">@ft</option>
                     }
                 </select>
             </div>
@@ -64,8 +64,7 @@
                 <select name="Transmission" class="form-control">
                     @foreach (var t in new[] { "Automatic", "Manual", "CVT" })
                     {
-                        <option value="@t" @(Model.Transmission == t ? "selected" : "")>@t</option>
-                    }
+                        <option value="@t" selected="@(Model.Transmission == t ? "selected" : null)">@t</option>                    }
                 </select>
             </div>
         </div>
